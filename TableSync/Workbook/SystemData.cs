@@ -13,7 +13,7 @@ namespace TableSync
                 {
                     new Range()
                     {
-                        Name = Constants.TableSync_Ranges,
+                        Name = Constants.TableSync_Range,
                         Schema = Constants.TableSync,
                         TableName = Constants.Ranges,
                         Columns = new RangeColumns()
@@ -26,7 +26,7 @@ namespace TableSync
                     },
                     new Range()
                     {
-                        Name = Constants.TableSync_RangeColumns,
+                        Name = Constants.TableSync_Column,
                         Schema = Constants.TableSync,
                         TableName = Constants.RangeColumns,
                         Columns = new RangeColumns()
@@ -40,7 +40,7 @@ namespace TableSync
                     },
                     new Range()
                     {
-                        Name = Constants.TableSync_RangeOrder,
+                        Name = Constants.TableSync_Order,
                         Schema = Constants.TableSync,
                         TableName = Constants.RangeOrder,
                         Columns = new RangeColumns()
@@ -52,7 +52,7 @@ namespace TableSync
                     },
                     new Range()
                     {
-                        Name = Constants.TableSync_RangeCondition,
+                        Name = Constants.TableSync_Condition,
                         Schema = Constants.TableSync,
                         TableName = Constants.RangeCondition,
                         Columns = new RangeColumns()
@@ -65,7 +65,7 @@ namespace TableSync
                     },
                     new Range()
                     {
-                        Name = Constants.TableSync_Settings,
+                        Name = Constants.TableSync_Setting,
                         Schema = Constants.TableSync,
                         TableName = Constants.Settings,
                         Columns = new RangeColumns()
@@ -82,24 +82,24 @@ namespace TableSync
 
         public SystemData()
         {
-            RangesDT = GetDataTable(Constants.TableSync_Ranges);
-            RangeColumnsDT = GetDataTable(Constants.TableSync_RangeColumns);
-            RangeOrderDT = GetDataTable(Constants.TableSync_RangeOrder);
-            RangeConditionDT = GetDataTable(Constants.TableSync_RangeCondition);
-            SettingsDT = GetDataTable(Constants.TableSync_Settings);
+            RangeDT = GetDataTable(Constants.TableSync_Range);
+            ColumnsDT = GetDataTable(Constants.TableSync_Column);
+            OrderDT = GetDataTable(Constants.TableSync_Order);
+            ConditionDT = GetDataTable(Constants.TableSync_Condition);
+            SettingDT = GetDataTable(Constants.TableSync_Setting);
         }
 
-        public Range Ranges { get { return SyncDefinition.Ranges[Constants.TableSync_Ranges]; } }
-        public Range RangeColumns { get { return SyncDefinition.Ranges[Constants.TableSync_RangeColumns]; } }
-        public Range RangeOrder { get { return SyncDefinition.Ranges[Constants.TableSync_RangeOrder]; } }
-        public Range RangeCondition { get { return SyncDefinition.Ranges[Constants.TableSync_RangeCondition]; } }
-        public Range Settings { get { return SyncDefinition.Ranges[Constants.TableSync_Settings]; } }
+        public Range Range { get { return SyncDefinition.Ranges[Constants.TableSync_Range]; } }
+        public Range Column { get { return SyncDefinition.Ranges[Constants.TableSync_Column]; } }
+        public Range Order { get { return SyncDefinition.Ranges[Constants.TableSync_Order]; } }
+        public Range Condition { get { return SyncDefinition.Ranges[Constants.TableSync_Condition]; } }
+        public Range Setting { get { return SyncDefinition.Ranges[Constants.TableSync_Setting]; } }
 
-        public DataTable RangesDT { get; private set; }
-        public DataTable RangeColumnsDT { get; private set; }
-        public DataTable RangeOrderDT { get; private set; }
-        public DataTable RangeConditionDT { get; private set; }
-        public DataTable SettingsDT { get; private set; }
+        public DataTable RangeDT { get; private set; }
+        public DataTable ColumnsDT { get; private set; }
+        public DataTable OrderDT { get; private set; }
+        public DataTable ConditionDT { get; private set; }
+        public DataTable SettingDT { get; private set; }
 
 
         private static DataTable GetDataTable(string rangeName)

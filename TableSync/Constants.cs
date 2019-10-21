@@ -26,11 +26,11 @@ namespace TableSync
         public const string Settings = "Settings";
         public const string TableName = "TableName";
         public const string TableSync = "TableSync";
-        public const string TableSync_Ranges = "TableSync_Ranges";
-        public const string TableSync_RangeColumns = "TableSync_RangeColumns";
-        public const string TableSync_RangeOrder = "TableSync_RangeOrder";
-        public const string TableSync_RangeCondition = "TableSync_RangeCondition";
-        public const string TableSync_Settings = "TableSync_Settings";
+        public const string TableSync_Range = "TableSync_Range";
+        public const string TableSync_Column = "TableSync_Column";
+        public const string TableSync_Order = "TableSync_Order";
+        public const string TableSync_Condition = "TableSync_Condition";
+        public const string TableSync_Setting = "TableSync_Setting";
         public const string Title = "Title";
         public const string Value = "Value";
     }

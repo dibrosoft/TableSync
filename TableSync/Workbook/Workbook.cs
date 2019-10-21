@@ -18,6 +18,7 @@ namespace TableSync
             this.connections = connections;
             var fileInfo = new FileInfo(filename);
             excelPackage = new ExcelPackage(fileInfo);
+            excelPackage.Workbook.Calculate();
         }
 
         public void Download(string connectionStringOrName, bool keepFormula = false, SyncDefinition syncDefinition = null, Settings settings = null)
@@ -110,46 +111,46 @@ namespace TableSync
         {
             var systemData = new SystemData();
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Ranges))
-                ResizeRange(systemData.Ranges);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Range))
+                ResizeRange(systemData.Range);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeColumns))
-                ResizeRange(systemData.RangeColumns);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Column))
+                ResizeRange(systemData.Column);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeOrder))
-                ResizeRange(systemData.RangeOrder);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Order))
+                ResizeRange(systemData.Order);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeCondition))
-                ResizeRange(systemData.RangeCondition);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Condition))
+                ResizeRange(systemData.Condition);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Settings))
-                ResizeRange(systemData.Settings);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
+                ResizeRange(systemData.Setting);
         }
 
         public SyncDefinition GetDefinition()
         {
-            if (!excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Ranges))
+            if (!excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Range))
                 throw new MissingSyncDefinitionException();
 
             var systemData = new SystemData();
 
-            CopyRangeToTable(systemData.Ranges, systemData.RangesDT);
+            CopyRangeToTable(systemData.Range, systemData.RangeDT);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeColumns))
-                CopyRangeToTable(systemData.RangeColumns, systemData.RangeColumnsDT);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Column))
+                CopyRangeToTable(systemData.Column, systemData.ColumnsDT);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeOrder))
-                CopyRangeToTable(systemData.RangeOrder, systemData.RangeOrderDT);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Order))
+                CopyRangeToTable(systemData.Order, systemData.OrderDT);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeCondition))
-                CopyRangeToTable(systemData.RangeCondition, systemData.RangeConditionDT);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Condition))
+                CopyRangeToTable(systemData.Condition, systemData.ConditionDT);
 
-            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Settings))
-                CopyRangeToTable(systemData.Settings, systemData.SettingsDT);
+            if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
+                CopyRangeToTable(systemData.Setting, systemData.SettingDT);
 
             var result = new SyncDefinition() { Ranges = new Ranges() };
 
-            foreach (DataRow row in systemData.RangesDT.Rows)
+            foreach (DataRow row in systemData.RangeDT.Rows)
                 result.Ranges.Add(new Range()
                 {
                     Name = row[Constants.RangeName].ToString(),
@@ -158,7 +159,7 @@ namespace TableSync
                     Orientation = Enum.Parse<RangeOrientation>(row[Constants.Orientation].ToString())
                 });
 
-            foreach (DataRow row in systemData.RangeColumnsDT.Rows)
+            foreach (DataRow row in systemData.ColumnsDT.Rows)
             {
                 var rangeName = row[Constants.RangeName].ToString();
                 var range = result.Ranges[rangeName];
@@ -174,7 +175,7 @@ namespace TableSync
                 });
             }
 
-            foreach (DataRow row in systemData.RangeOrderDT.Rows)
+            foreach (DataRow row in systemData.OrderDT.Rows)
             {
                 var rangeName = row[Constants.RangeName].ToString();
                 var range = result.Ranges[rangeName];
@@ -188,7 +189,7 @@ namespace TableSync
                 });
             }
 
-            foreach (DataRow row in systemData.RangeConditionDT.Rows)
+            foreach (DataRow row in systemData.ConditionDT.Rows)
             {
                 var rangeName = row[Constants.RangeName].ToString();
                 var range = result.Ranges[rangeName];
@@ -203,7 +204,7 @@ namespace TableSync
                 });
             }
 
-            foreach (DataRow row in systemData.SettingsDT.Rows)
+            foreach (DataRow row in systemData.SettingDT.Rows)
             {
                 if (result.Settings == null)
                     result.Settings = new Settings();
@@ -225,19 +226,19 @@ namespace TableSync
 
             foreach (var range in syncDefinition.Ranges)
             {
-                newRow = systemData.RangesDT.NewRow();
+                newRow = systemData.RangeDT.NewRow();
 
                 newRow[Constants.RangeName] = range.Name;
                 newRow[Constants.Schema] = range.Schema;
                 newRow[Constants.TableName] = range.TableName;
                 newRow[Constants.Orientation] = range.Orientation;
 
-                systemData.RangesDT.Rows.Add(newRow);
+                systemData.RangeDT.Rows.Add(newRow);
 
                 if (range.HasColumns)
                     foreach (var column in range.Columns)
                     {
-                        newRow = systemData.RangeColumnsDT.NewRow();
+                        newRow = systemData.ColumnsDT.NewRow();
 
                         newRow[Constants.RangeName] = range.Name;
                         newRow[Constants.ColumnName] = column.Name;
@@ -245,71 +246,71 @@ namespace TableSync
                         newRow[Constants.NumberFormat] = column.NumberFormat.ToString();
                         newRow[Constants.CustomNumberFormat] = column.CustomNumberFormat;
 
-                        systemData.RangeColumnsDT.Rows.Add(newRow);
+                        systemData.ColumnsDT.Rows.Add(newRow);
                     }
 
                 if (range.HasOrder)
                     foreach (var item in range.Order)
                     {
-                        newRow = systemData.RangeOrderDT.NewRow();
+                        newRow = systemData.OrderDT.NewRow();
 
                         newRow[Constants.RangeName] = range.Name;
                         newRow[Constants.ColumnName] = item.Name;
                         newRow[Constants.Direction] = item.Direction.ToString();
 
-                        systemData.RangeOrderDT.Rows.Add(newRow);
+                        systemData.OrderDT.Rows.Add(newRow);
                     }
 
                 if (range.HasCondition)
                     foreach (var item in range.Condition)
                     {
-                        newRow = systemData.RangeConditionDT.NewRow();
+                        newRow = systemData.ConditionDT.NewRow();
 
                         newRow[Constants.RangeName] = range.Name;
                         newRow[Constants.ColumnName] = item.Name;
                         newRow[Constants.Operator] = item.Operator.ToString();
                         newRow[Constants.SettingName] = item.SettingName;
 
-                        systemData.RangeConditionDT.Rows.Add(newRow);
+                        systemData.ConditionDT.Rows.Add(newRow);
                     }
             }
 
             if (syncDefinition.HasSettings)
                 foreach (var item in syncDefinition.Settings)
                 {
-                    newRow = systemData.SettingsDT.NewRow();
+                    newRow = systemData.SettingDT.NewRow();
 
                     newRow[Constants.Name] = item.Name;
                     newRow[Constants.Value] = item.Value;
 
-                    systemData.SettingsDT.Rows.Add(newRow);
+                    systemData.SettingDT.Rows.Add(newRow);
                 }
 
 
-            if (systemData.RangesDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Ranges, systemData.RangesDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Ranges))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Ranges);
+            if (systemData.RangeDT.Rows.Count > 0 || insertFullDefinition)
+                CopyTableToRange(systemData.Range, systemData.RangeDT);
+            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Range))
+                excelPackage.Workbook.Names.Remove(Constants.TableSync_Range);
 
-            if (systemData.RangeColumnsDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.RangeColumns, systemData.RangeColumnsDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeColumns))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_RangeColumns);
+            if (systemData.ColumnsDT.Rows.Count > 0 || insertFullDefinition)
+                CopyTableToRange(systemData.Column, systemData.ColumnsDT);
+            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Column))
+                excelPackage.Workbook.Names.Remove(Constants.TableSync_Column);
 
-            if (systemData.RangeOrderDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.RangeOrder, systemData.RangeOrderDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeOrder))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_RangeOrder);
+            if (systemData.OrderDT.Rows.Count > 0 || insertFullDefinition)
+                CopyTableToRange(systemData.Order, systemData.OrderDT);
+            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Order))
+                excelPackage.Workbook.Names.Remove(Constants.TableSync_Order);
 
-            if (systemData.RangeConditionDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.RangeCondition, systemData.RangeConditionDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_RangeCondition))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_RangeCondition);
+            if (systemData.ConditionDT.Rows.Count > 0 || insertFullDefinition)
+                CopyTableToRange(systemData.Condition, systemData.ConditionDT);
+            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Condition))
+                excelPackage.Workbook.Names.Remove(Constants.TableSync_Condition);
 
-            if (systemData.SettingsDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Settings, systemData.SettingsDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Settings))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Settings);
+            if (systemData.SettingDT.Rows.Count > 0 || insertFullDefinition)
+                CopyTableToRange(systemData.Setting, systemData.SettingDT);
+            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
+                excelPackage.Workbook.Names.Remove(Constants.TableSync_Setting);
         }
 
         public void Save()
@@ -416,15 +417,15 @@ namespace TableSync
 
             foreach (var setting in consolidatedSettings)
             {
-                var newRow = systemData.SettingsDT.NewRow();
+                var newRow = systemData.SettingDT.NewRow();
 
                 newRow[Constants.Name] = setting.Name;
                 newRow[Constants.Value] = setting.Value;
 
-                systemData.SettingsDT.Rows.Add(newRow);
+                systemData.SettingDT.Rows.Add(newRow);
             }
 
-            CopyTableToRange(systemData.Settings, systemData.SettingsDT);
+            CopyTableToRange(systemData.Setting, systemData.SettingDT);
         }
 
         public void Dispose()
