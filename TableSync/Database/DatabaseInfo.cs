@@ -84,11 +84,11 @@ namespace TableSync
 
         private void AddDependsOn(SqlConnection connection)
         {
-            using (var command = DbProviderFactories.GetFactory(connection).CreateCommand())
+            using (var command = new SqlCommand())
             {
                 command.CommandText = "SELECT OBJECT_SCHEMA_NAME(parent_object_id) AS SchemaName, OBJECT_NAME(parent_object_id) AS Name, OBJECT_SCHEMA_NAME(referenced_object_id) AS DependsOnSchemaName, OBJECT_NAME(referenced_object_id) AS DependsOnName FROM sys.foreign_keys";
                 command.Connection = connection;
-                using (var dataAdapter = DbProviderFactories.GetFactory(connection).CreateDataAdapter())
+                using (var dataAdapter = new SqlDataAdapter())
                 {
                     dataAdapter.SelectCommand = command;
 

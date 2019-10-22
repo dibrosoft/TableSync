@@ -156,7 +156,7 @@ namespace TableSync
                     Name = row[Constants.RangeName].ToString(),
                     Schema = row[Constants.Schema] == DBNull.Value ? null : row[Constants.Schema].ToString(),
                     TableName = row[Constants.TableName] == DBNull.Value ? null : row[Constants.TableName].ToString(),
-                    Orientation = Enum.Parse<RangeOrientation>(row[Constants.Orientation].ToString())
+                    Orientation = (RangeOrientation)Enum.Parse(typeof(RangeOrientation), row[Constants.Orientation].ToString())
                 });
 
             foreach (DataRow row in systemData.ColumnsDT.Rows)
@@ -170,7 +170,7 @@ namespace TableSync
                 {
                     Name = row[Constants.ColumnName].ToString(),
                     Title = row[Constants.Title] == DBNull.Value ? null : row[Constants.Title].ToString(),
-                    NumberFormat = Enum.Parse<NumberFormat>(row[Constants.NumberFormat].ToString()),
+                    NumberFormat = (NumberFormat)Enum.Parse(typeof(NumberFormat), row[Constants.NumberFormat].ToString()),
                     CustomNumberFormat = row[Constants.CustomNumberFormat] == DBNull.Value ? null : row[Constants.CustomNumberFormat].ToString(),
                 });
             }
@@ -185,7 +185,7 @@ namespace TableSync
                 range.Order.Add(new RangeOrderItem()
                 {
                     Name = row[Constants.ColumnName].ToString(),
-                    Direction = Enum.Parse<RangeOrderDirection>(row[Constants.Direction].ToString()),
+                    Direction = (RangeOrderDirection)Enum.Parse(typeof(RangeOrderDirection), row[Constants.Direction].ToString()),
                 });
             }
 
@@ -199,7 +199,7 @@ namespace TableSync
                 range.Condition.Add(new RangeConditionItem()
                 {
                     Name = row[Constants.ColumnName].ToString(),
-                    Operator = Enum.Parse<RangeConditionOperator>(row[Constants.Operator].ToString()),
+                    Operator = (RangeConditionOperator)Enum.Parse(typeof(RangeConditionOperator), row[Constants.Operator].ToString()),
                     SettingName = row[Constants.SettingName].ToString()
                 });
             }

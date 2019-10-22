@@ -26,7 +26,7 @@ namespace TableSync
 
                 if (string.IsNullOrEmpty(usedSchema) && string.IsNullOrEmpty(usedTableName))
                 {
-                    var parts = Name.Split("_");
+                    var parts = Name.Split('_');
 
                     switch (parts.Length)
                     {
@@ -37,7 +37,7 @@ namespace TableSync
                         case 2:
                             if (Name.Contains("_"))
                             {
-                                usedSchema = Name.Split("_")[0];
+                                usedSchema = Name.Split('_')[0];
                                 usedTableName = Name.Substring(usedSchema.Length + 1);
 
                                 if (string.IsNullOrEmpty(usedSchema) || string.IsNullOrEmpty(usedTableName))
