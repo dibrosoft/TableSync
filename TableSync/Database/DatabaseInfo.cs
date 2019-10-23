@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -24,6 +25,11 @@ namespace TableSync
             }
         }
 
+        private static HashSet<string> reservedTableNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+        {
+            "__EFMigrationsHistory"
+        };
+
         private void GenerateTableInfos(SqlConnection connection, HashSet<string> tablesOfInterest)
         {
             var dataTypeMap = GenerateDataTypeMap(connection);
@@ -39,31 +45,35 @@ namespace TableSync
             {
                 var newSchema = column["TABLE_SCHEMA"].ToString();
                 var newTableName = column["TABLE_NAME"].ToString();
-                var newFullTableName = TableInfo.CreateSqlTableName(newSchema, newTableName);
-                if (tablesOfInterest == null || tablesOfInterest.Contains(newFullTableName))
+
+                if (!reservedTableNames.Contains(newTableName))
                 {
-                    var columnName = column["COLUMN_NAME"].ToString();
-                    var dataType = column["DATA_TYPE"].ToString();
-                    var columnType = dataTypeMap.ContainsKey(dataType) ? dataTypeMap[dataType] : "System.Byte[]";
-                    var isRequired = string.Compare(column["IS_NULLABLE"].ToString(), "NO", true) == 0;
-                    ColumnInfo NewColumnSource = new ColumnInfo(columnName, columnType, isRequired);
-
-                    if (tableName == null)
+                    var newFullTableName = TableInfo.CreateSqlTableName(newSchema, newTableName);
+                    if (tablesOfInterest == null || tablesOfInterest.Contains(newFullTableName))
                     {
-                        schema = newSchema;
-                        tableName = newTableName;
-                    }
+                        var columnName = column["COLUMN_NAME"].ToString();
+                        var dataType = column["DATA_TYPE"].ToString();
+                        var columnType = dataTypeMap.ContainsKey(dataType) ? dataTypeMap[dataType] : "System.Byte[]";
+                        var isRequired = string.Compare(column["IS_NULLABLE"].ToString(), "NO", true) == 0;
+                        ColumnInfo NewColumnSource = new ColumnInfo(columnName, columnType, isRequired);
 
-                    if (string.Compare(tableName, newTableName, true) == 0 && string.Compare(schema, newSchema, true) == 0)
-                        columnSources.Add(NewColumnSource);
-                    else
-                    {
-                        Refresh(schema, tableName, columnSources);
+                        if (tableName == null)
+                        {
+                            schema = newSchema;
+                            tableName = newTableName;
+                        }
 
-                        schema = newSchema;
-                        tableName = newTableName;
-                        columnSources = new List<ColumnInfo>();
-                        columnSources.Add(NewColumnSource);
+                        if (string.Compare(tableName, newTableName, true) == 0 && string.Compare(schema, newSchema, true) == 0)
+                            columnSources.Add(NewColumnSource);
+                        else
+                        {
+                            Refresh(schema, tableName, columnSources);
+
+                            schema = newSchema;
+                            tableName = newTableName;
+                            columnSources = new List<ColumnInfo>();
+                            columnSources.Add(NewColumnSource);
+                        }
                     }
                 }
             }
