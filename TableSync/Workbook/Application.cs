@@ -27,43 +27,27 @@ namespace TableSync
 
         public string Info(string connectionStringOrName, string tableName)
         {
-            var sb = new StringBuilder();
-
             if (string.IsNullOrEmpty(connectionStringOrName))
-            {
-                sb.AppendLine("Available connections:");
-                foreach (var connection in connections)
-                    sb.AppendLine($"  {connection.ToString()}");
-            }
+                return MyJsonConvert.SerializeObject(connections.Select(item => item.Name).ToList());
+
+            var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
+            var databaseInfo = new DatabaseInfo(connectionString);
+
+            if (string.IsNullOrEmpty(tableName))
+                return MyJsonConvert.SerializeObject(databaseInfo);
             else
             {
-                var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
-                var databaseInfo = new DatabaseInfo(connectionString);
-
-                if (string.IsNullOrEmpty(tableName))
-                {
-                    sb.AppendLine("Available tables:");
-                    foreach (var tableinfo in databaseInfo.TableInfos)
-                        sb.AppendLine($"  {tableinfo.ToString()}");
-                }
+                TableInfo tableInfo;
+                if (databaseInfo.TableInfos.Contains(tableName))
+                    tableInfo = databaseInfo.TableInfos[tableName];
                 else
-                {
-                    TableInfo tableInfo;
-                    if (databaseInfo.TableInfos.Contains(tableName))
-                        tableInfo = databaseInfo.TableInfos[tableName];
-                    else
-                        tableInfo = databaseInfo.TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0).SingleOrDefault();
+                    tableInfo = databaseInfo.TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0).SingleOrDefault();
 
-                    if (tableInfo == null)
-                        throw new MissingTableException(tableName);
+                if (tableInfo == null)
+                    throw new MissingTableException(tableName);
 
-                    sb.AppendLine("Available columns:");
-                    foreach (var columnInfo in tableInfo.ColumnInfos)
-                        sb.AppendLine($"  {columnInfo.ToString()}");
-                }
+                return MyJsonConvert.SerializeObject(tableInfo);
             }
-
-            return sb.ToString();
         }
 
         public static SyncDefinition GetDefinitionOrDefault(IEnumerable<string> tableNames, string definitionFileName)
