@@ -189,7 +189,11 @@ namespace TSync
                 var settings = application.GetSettingsOrDefault(opts.SettingsFileName);
 
                 if (opts.AutoResize)
-                    workbook.Resize(opts.ConnectionStringOrName, syncDefinition);
+                {
+                    var hasChanged = workbook.Resize(opts.ConnectionStringOrName, syncDefinition);
+                    if (hasChanged)
+                        workbook.Save();
+                }
 
                 workbook.Upload(opts.ConnectionStringOrName, syncDefinition, settings);
             }
@@ -237,12 +241,12 @@ namespace TSync
             {
                 var syncDefinition = application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
 
-                workbook.Resize(opts.ConnectionStringOrName, syncDefinition);
-
-                if (string.IsNullOrEmpty(opts.WorkbookOutputFileName))
-                    workbook.Save();
-                else
-                    workbook.SaveAs(opts.WorkbookOutputFileName);
+                var hasChanged = workbook.Resize(opts.ConnectionStringOrName, syncDefinition);
+                if (hasChanged)
+                    if (string.IsNullOrEmpty(opts.WorkbookOutputFileName))
+                        workbook.Save();
+                    else
+                        workbook.SaveAs(opts.WorkbookOutputFileName);
             }
 
             return ExitCode.Success;

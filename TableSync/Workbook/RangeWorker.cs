@@ -12,6 +12,7 @@ namespace TableSync
         private Range range;
         private ExcelNamedRange namedRange;
         private ExcelWorksheet worksheet;
+        public bool IsNewRange { get; set; } = false;
 
         public RangeWorker(ExcelPackage excelPackage, Range range)
         {
@@ -35,6 +36,7 @@ namespace TableSync
 
             var newRange = this[1, 1, 1, 1];
             namedRange = excelPackage.Workbook.Names.Add(range.Name, newRange);
+            IsNewRange = true;
         }
 
         public int FirstRowIndex

@@ -91,11 +91,13 @@ namespace TableSync
             }
         }
 
-        public void Resize(string connectionStringOrName, SyncDefinition syncDefinition = null)
+        public bool Resize(string connectionStringOrName, SyncDefinition syncDefinition = null)
         {
+            var hasChanged = false;
+
             if (syncDefinition == null)
             {
-                ResizeDefinition();
+                hasChanged = ResizeDefinition();
 
                 syncDefinition = GetDefinition();
             }
@@ -104,27 +106,51 @@ namespace TableSync
 
             using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
                 foreach (var range in databaseManager.ExecutableRanges)
-                    ResizeRange(range);
+                {
+                    var rangeChanges = ResizeRange(range);
+                    hasChanged = hasChanged || rangeChanges;
+                }
+
+            return hasChanged;
         }
 
-        private void ResizeDefinition()
+        private bool ResizeDefinition()
         {
+            var hasChanged = false;
+
             var systemData = new SystemData();
 
             if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Range))
-                ResizeRange(systemData.Range);
+            {
+                var rangeChanges = ResizeRange(systemData.Range);
+                hasChanged = hasChanged || rangeChanges;
+            }
 
             if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Column))
-                ResizeRange(systemData.Column);
+            {
+                var rangeChanges = ResizeRange(systemData.Column);
+                hasChanged = hasChanged || rangeChanges;
+            }
 
             if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Order))
-                ResizeRange(systemData.Order);
+            {
+                var rangeChanges = ResizeRange(systemData.Order);
+                hasChanged = hasChanged || rangeChanges;
+            }
 
             if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Condition))
-                ResizeRange(systemData.Condition);
+            {
+                var rangeChanges = ResizeRange(systemData.Condition);
+                hasChanged = hasChanged || rangeChanges;
+            }
 
             if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
-                ResizeRange(systemData.Setting);
+            {
+                var rangeChanges = ResizeRange(systemData.Setting);
+                hasChanged = hasChanged || rangeChanges;
+            }
+
+            return hasChanged;
         }
 
         public SyncDefinition GetDefinition()
@@ -383,7 +409,7 @@ namespace TableSync
             excelPackage.Workbook.Names.Add(range.Name, newRange);
         }
 
-        private void ResizeRange(Range range)
+        private bool ResizeRange(Range range)
         {
             var rangeWorker = new RangeWorker(excelPackage, range);
 
@@ -395,11 +421,16 @@ namespace TableSync
             while (!rangeWorker.IsEmpty(newLastRowIndex + 1))
                 newLastRowIndex++;
 
+            if (newLastRowIndex == rangeWorker.LastRowIndex)
+                return rangeWorker.IsNewRange;
+
             excelPackage.Workbook.Names.Remove(range.Name);
 
             var newRange = rangeWorker[rangeWorker.FirstRowIndex, rangeWorker.FirstColumnIndex, newLastRowIndex, rangeWorker.LastColumnIndex];
 
             excelPackage.Workbook.Names.Add(range.Name, newRange);
+
+            return true;
         }
 
         private void RefreshSettings(SyncDefinition syncDefinition, Settings settings)
