@@ -66,7 +66,7 @@ namespace TableSync
             return sb.ToString();
         }
 
-        public SyncDefinition GetDefinitionOrDefault(IEnumerable<string> tableNames, string definitionFileName)
+        public static SyncDefinition GetDefinitionOrDefault(IEnumerable<string> tableNames, string definitionFileName)
         {
             if (tableNames.Count() > 0)
                 return new SyncDefinition(tableNames);
@@ -77,7 +77,7 @@ namespace TableSync
             return null;
         }
 
-        public Settings GetSettingsOrDefault(string settingsFileName)
+        public static Settings GetSettingsOrDefault(string settingsFileName)
         {
             if (string.IsNullOrEmpty(settingsFileName))
                 return null;

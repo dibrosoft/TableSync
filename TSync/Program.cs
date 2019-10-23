@@ -166,8 +166,8 @@ namespace TSync
             var application = serviceProvider.GetService<Application>();
             using (var workbook = application.Open(opts.WorkbookFileName, false))
             {
-                var syncDefinition = application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
-                var settings = application.GetSettingsOrDefault(opts.SettingsFileName);
+                var syncDefinition = Application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
+                var settings = Application.GetSettingsOrDefault(opts.SettingsFileName);
 
                 workbook.Download(opts.ConnectionStringOrName, opts.KeepFormula, syncDefinition, settings);
 
@@ -185,8 +185,8 @@ namespace TSync
             var application = serviceProvider.GetService<Application>();
             using (var workbook = application.Open(opts.WorkbookFileName))
             {
-                var syncDefinition = application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
-                var settings = application.GetSettingsOrDefault(opts.SettingsFileName);
+                var syncDefinition = Application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
+                var settings = Application.GetSettingsOrDefault(opts.SettingsFileName);
 
                 if (opts.AutoResize)
                 {
@@ -206,7 +206,7 @@ namespace TSync
             var application = serviceProvider.GetService<Application>();
             using (var workbook = application.Open(opts.WorkbookFileName, false))
             {
-                var definition = application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
+                var definition = Application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
                 if (definition == null)
                     throw new MissingSyncDefinitionException();
 
@@ -239,7 +239,7 @@ namespace TSync
             var application = serviceProvider.GetService<Application>();
             using (var workbook = application.Open(opts.WorkbookFileName))
             {
-                var syncDefinition = application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
+                var syncDefinition = Application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
 
                 var hasChanged = workbook.Resize(opts.ConnectionStringOrName, syncDefinition);
                 if (hasChanged)
