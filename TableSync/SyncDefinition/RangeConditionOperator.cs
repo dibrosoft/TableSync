@@ -8,7 +8,8 @@
         LessThanOrEqual,
         GreaterThan,
         GreaterThanOrEqual,
-        Like
+        Like,
+        Custom
     }
 
 }

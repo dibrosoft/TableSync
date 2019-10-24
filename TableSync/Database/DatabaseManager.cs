@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -99,33 +100,38 @@ namespace TableSync
                 else
                     stringBuilder.Append(" and ");
 
-                stringBuilder.Append("[");
-                stringBuilder.Append(item.Name);
-                stringBuilder.Append("]");
 
+                var fieldName = string.Format("[{0}]", item.Name);
+
+                var operatorFormat = string.Empty;
                 switch (item.Operator)
                 {
                     case RangeConditionOperator.Equal:
-                        stringBuilder.Append(" = ");
+                        operatorFormat = "{0} = {1}";
                         break;
                     case RangeConditionOperator.Unequal:
-                        stringBuilder.Append(" <> ");
+                        operatorFormat = "{0} <> {1}";
                         break;
                     case RangeConditionOperator.GreaterThan:
-                        stringBuilder.Append(" > ");
+                        operatorFormat = "{0} > {1}";
                         break;
                     case RangeConditionOperator.GreaterThanOrEqual:
-                        stringBuilder.Append(" >= ");
+                        operatorFormat = "{0} >= {1}";
                         break;
                     case RangeConditionOperator.LessThan:
-                        stringBuilder.Append(" < ");
+                        operatorFormat = "{0} < {1}";
                         break;
                     case RangeConditionOperator.LessThanOrEqual:
-                        stringBuilder.Append(" <= ");
+                        operatorFormat = "{0} <= {1}";
                         break;
                     case RangeConditionOperator.Like:
-                        stringBuilder.Append(" like ");
+                        operatorFormat = "{0} like {1}";
                         break;
+                    case RangeConditionOperator.Custom:
+                        operatorFormat = item.CustomOperatorFormat;
+                        break;
+                    default:
+                        throw new InvalidEnumArgumentException();
                 }
 
                 var columnInfo = tableInfo.ColumnInfos[item.Name];
@@ -143,25 +149,24 @@ namespace TableSync
                 if (value == null)
                     throw new MissingSettingException(item.SettingName);
 
+                string formattedValue;
+
                 switch (columnInfo.ColumnType)
                 {
                     case "System.String":
-                        stringBuilder.Append("'");
-                        stringBuilder.Append(value.ToString().Replace("'", "''"));
-                        stringBuilder.Append("'");
+                        formattedValue = string.Format("'{0}'", value.ToString().Replace("'", "''"));
                         break;
                     case "System.DateTime":
                         var typedValue = value.GetType() == typeof(string) ? DateTime.Parse(value.ToString()) : (DateTime)value;
 
-                        stringBuilder.Append("'");
-                        stringBuilder.Append(typedValue.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                        stringBuilder.Append("'");
+                        formattedValue = string.Format("'{0}'", typedValue.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                         break;
                     default:
-                        stringBuilder.Append(value);
+                        formattedValue = value.ToString();
                         break;
                 }
 
+                stringBuilder.Append(string.Format(operatorFormat, fieldName, formattedValue));
             }
 
             return stringBuilder.ToString();

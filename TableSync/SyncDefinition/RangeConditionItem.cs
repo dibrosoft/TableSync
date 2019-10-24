@@ -12,13 +12,16 @@ namespace TableSync
 
         public string SettingName { get; set; }
 
+        public string CustomOperatorFormat { get; set; }
+
         public RangeConditionItem Clone()
         {
             return new RangeConditionItem()
             {
                 Name = Name,
                 SettingName = SettingName,
-                Operator = Operator
+                Operator = Operator,
+                CustomOperatorFormat = CustomOperatorFormat
             };
         }
     }

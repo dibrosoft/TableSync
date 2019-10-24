@@ -9,6 +9,7 @@ namespace TableSync
         public const string ColumnName = "ColumnName";
         public const string ConnectionString = "ConnectionString";
         public const string CustomNumberFormat = "CustomNumberFormat";
+        public const string CustomOperatorFormat = "CustomOperatorFormat";
         public const string Direction = "Direction";
         public const string Name = "Name";
         public const string Names = "Names";

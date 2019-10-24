@@ -226,7 +226,8 @@ namespace TableSync
                 {
                     Name = row[Constants.ColumnName].ToString(),
                     Operator = (RangeConditionOperator)Enum.Parse(typeof(RangeConditionOperator), row[Constants.Operator].ToString()),
-                    SettingName = row[Constants.SettingName].ToString()
+                    SettingName = row[Constants.SettingName].ToString(),
+                    CustomOperatorFormat = row[Constants.CustomOperatorFormat] == DBNull.Value ? null : row[Constants.CustomOperatorFormat].ToString(),
                 });
             }
 
@@ -262,15 +263,15 @@ namespace TableSync
                 systemData.RangeDT.Rows.Add(newRow);
 
                 if (range.HasColumns)
-                    foreach (var column in range.Columns)
+                    foreach (var item in range.Columns)
                     {
                         newRow = systemData.ColumnsDT.NewRow();
 
                         newRow[Constants.RangeName] = range.Name;
-                        newRow[Constants.ColumnName] = column.Name;
-                        newRow[Constants.Title] = column.Title;
-                        newRow[Constants.NumberFormat] = column.NumberFormat.ToString();
-                        newRow[Constants.CustomNumberFormat] = column.CustomNumberFormat;
+                        newRow[Constants.ColumnName] = item.Name;
+                        newRow[Constants.Title] = item.Title;
+                        newRow[Constants.NumberFormat] = item.NumberFormat.ToString();
+                        newRow[Constants.CustomNumberFormat] = item.CustomNumberFormat;
 
                         systemData.ColumnsDT.Rows.Add(newRow);
                     }
@@ -296,6 +297,7 @@ namespace TableSync
                         newRow[Constants.ColumnName] = item.Name;
                         newRow[Constants.Operator] = item.Operator.ToString();
                         newRow[Constants.SettingName] = item.SettingName;
+                        newRow[Constants.CustomOperatorFormat] = item.CustomOperatorFormat;
 
                         systemData.ConditionDT.Rows.Add(newRow);
                     }

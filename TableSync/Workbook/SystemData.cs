@@ -60,7 +60,8 @@ namespace TableSync
                             new RangeColumn() { Name = Constants.RangeName },
                             new RangeColumn() { Name = Constants.ColumnName },
                             new RangeColumn() { Name = Constants.Operator },
-                            new RangeColumn() { Name = Constants.SettingName }
+                            new RangeColumn() { Name = Constants.SettingName },
+                            new RangeColumn() { Name = Constants.CustomOperatorFormat }
                         }
                     },
                     new Range()
