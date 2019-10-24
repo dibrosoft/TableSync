@@ -107,22 +107,22 @@ namespace TableSync
                 switch (item.Operator)
                 {
                     case RangeConditionOperator.Equal:
-                        operatorFormat = "{0} = {1}";
+                        operatorFormat = "{0}={1}";
                         break;
                     case RangeConditionOperator.Unequal:
-                        operatorFormat = "{0} <> {1}";
+                        operatorFormat = "{0}<>{1}";
                         break;
                     case RangeConditionOperator.GreaterThan:
-                        operatorFormat = "{0} > {1}";
+                        operatorFormat = "{0}>{1}";
                         break;
                     case RangeConditionOperator.GreaterThanOrEqual:
-                        operatorFormat = "{0} >= {1}";
+                        operatorFormat = "{0}>={1}";
                         break;
                     case RangeConditionOperator.LessThan:
-                        operatorFormat = "{0} < {1}";
+                        operatorFormat = "{0}<{1}";
                         break;
                     case RangeConditionOperator.LessThanOrEqual:
-                        operatorFormat = "{0} <= {1}";
+                        operatorFormat = "{0}<={1}";
                         break;
                     case RangeConditionOperator.Like:
                         operatorFormat = "{0} like {1}";
