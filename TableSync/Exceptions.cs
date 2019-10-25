@@ -7,7 +7,6 @@ namespace TableSync
     public abstract class ExceptionBase : Exception
     {
         public ExceptionBase(string message) : base(message) { }
-        public ExceptionBase(string message, Exception inner) : base(message, inner) { }
     }
 
     public class CyclicDependenciesException : ExceptionBase
@@ -20,10 +19,6 @@ namespace TableSync
         public IllegalFileExtensionException(string fileName, string extension) : base($"The file {fileName} has the wrong extension. Extension {extension} is expected.") { }
     }
 
-    public class UploadMultipleKeyException : ExceptionBase
-    {
-        public UploadMultipleKeyException() : base("Only tables with one column primary keys are supported for upload.") { }
-    }
     public class IllegalRangeNameException : ExceptionBase
     {
         public IllegalRangeNameException() : base("The range name is illegal.") { }
@@ -49,11 +44,6 @@ namespace TableSync
         public MissingSyncDefinitionException() : base("The synchronisation definition is missing. If a workbook doesn't contain a synchronisation definition it is necessary to pass a definition with the option -n|--TableNames or -d|--DefinitionFileName. You can use 'tsync updatedef' to provide a workbook with a synchronisation definition.") { }
     }
 
-    public class MissingRangesException : ExceptionBase
-    {
-        public MissingRangesException() : base("There are no tables configured.") { }
-    }
-
     public class MissingSettingException : ExceptionBase
     {
         public MissingSettingException(string settingName) : base($"The value for setting {settingName} is missing") { }
@@ -70,10 +60,6 @@ namespace TableSync
     public class WorkSheetExistsException : ExceptionBase
     {
         public WorkSheetExistsException(string worksheetName) : base($"Worksheet {worksheetName} already exists") { }
-    }
-    public class WrongTableSyncRangeException : ExceptionBase
-    {
-        public WrongTableSyncRangeException() : base("The named range TableSync may only contain exactly one row.") { }
     }
 }
 

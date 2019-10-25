@@ -45,6 +45,14 @@ namespace TableSync
 
         private DataTable DownloadTable(Range range, DownloadType downloadType, SyncDefinition syncDefinition, Settings settings)
         {
+            var query = GetQuery(range, downloadType, syncDefinition, settings);
+
+            using (var tableContext = databaseContext.GetTableContext(query))
+                return tableContext.DataTable;
+        }
+
+        private string GetQuery(Range range, DownloadType downloadType, SyncDefinition syncDefinition, Settings settings)
+        {
             TableInfo tableInfo = databaseInfo.TableInfos[range.FullTableName];
 
             var stringBuilder = new StringBuilder();
@@ -66,8 +74,7 @@ namespace TableSync
             if (range.HasOrder)
                 AppendOrder(range, stringBuilder);
 
-            using (var tableContext = databaseContext.GetTableContext(stringBuilder.ToString()))
-                return tableContext.DataTable;
+            return stringBuilder.ToString();
         }
 
         private static void AppendColumns(Range range, StringBuilder stringBuilder)
@@ -193,21 +200,21 @@ namespace TableSync
             }
         }
 
-        public IEnumerable<string> SortIndependantToDependant(Ranges ranges)
+        public IEnumerable<string> FullTableNamesIndependantToDependant(Ranges ranges)
         {
             var result = new List<string>();
-            var tableNames = ranges.Select(item => item.FullTableName).ToList();
-            var tableNamesToInspect = ranges.Select(item => item.FullTableName).ToList();
+            var fullTableNames = ranges.Select(item => item.FullTableName).ToList();
+            var fullTableNamesToInspect = ranges.Select(item => item.FullTableName).ToList();
 
             do
             {
                 var dependants = new List<string>();
 
-                foreach (var tableName in tableNamesToInspect)
+                foreach (var tableName in fullTableNamesToInspect)
                 {
                     var tableInfo = databaseInfo.TableInfos[tableName];
                     // Are there dependencies of tableName with other inspected tables?
-                    var tableDependencies = tableInfo.DependsOn.Intersect(tableNames, StringComparer.InvariantCultureIgnoreCase);
+                    var tableDependencies = tableInfo.DependsOn.Intersect(fullTableNames, StringComparer.InvariantCultureIgnoreCase);
 
                     // Remove tables that are already part of the result from the dependencies
                     tableDependencies = tableDependencies.Where(item => !result.Contains(item, StringComparer.InvariantCultureIgnoreCase)).ToList();
@@ -218,26 +225,23 @@ namespace TableSync
                         result.Add(tableName);
                 }
 
-                if (tableNamesToInspect.Count() == dependants.Count())
+                if (fullTableNamesToInspect.Count() == dependants.Count())
                     throw new CyclicDependenciesException(dependants);
 
-                tableNamesToInspect = dependants;
-            } while (tableNamesToInspect.Any());
+                fullTableNamesToInspect = dependants;
+            } while (fullTableNamesToInspect.Any());
 
             return result;
         }
 
-        public IEnumerable<string> SortDependantToIndependant(Ranges ranges)
+        public IEnumerable<string> FullTableNamesDependantToIndependant(Ranges ranges)
         {
-            return SortIndependantToDependant(ranges).Reverse();
+            return FullTableNamesIndependantToDependant(ranges).Reverse();
         }
 
         public void UploadChecks(Range range)
         {
             var tableInfo = databaseInfo.TableInfos[range.FullTableName];
-            var primaryColumnCount = tableInfo.ColumnInfos.Where(item => item.IsPrimary).Count();
-            if (primaryColumnCount != 1)
-                throw new UploadMultipleKeyException();
             
             foreach(var columnInfo in tableInfo.ColumnInfos)
             { 
@@ -256,31 +260,41 @@ namespace TableSync
             return DownloadTable(range, DownloadType.OnlyStructure, syncDefinition, null);
         }
 
-        private DataRow SearchRow(DataTable dataTable, ColumnInfo columnInfo, object value)
+        private DataRow SearchRow(DataTable dataTable, IEnumerable<ColumnInfo> columnsToSearchFor, DataRow valuesToSearchFor)
         {
             foreach (DataRow row in dataTable.Rows)
-            {
-                var rowValue = row[columnInfo.ColumnName];
+                if (CompareColumns(row, columnsToSearchFor, valuesToSearchFor))
+                    return row;
+
+            return null;
+        }
+
+        private bool CompareColumns(DataRow row, IEnumerable<ColumnInfo> columnsToSearchFor, DataRow valuesToSearchFor)
+        {
+            foreach(var column in columnsToSearchFor)
+            { 
+                var rowValue = row[column.ColumnName];
+                var valueToSearchFor = valuesToSearchFor[column.ColumnName];
 
                 bool equal;
-                switch (columnInfo.ColumnType)
+                switch (column.ColumnType)
                 {
                     case "System.String":
-                        equal = string.Compare(Convert.ToString(rowValue), Convert.ToString(value)) == 0;
+                        equal = string.Compare(Convert.ToString(rowValue), Convert.ToString(valueToSearchFor)) == 0;
                         break;
                     default:
-                        if (rowValue.GetType().FullName != value.GetType().FullName)
+                        if (rowValue.GetType().FullName != valueToSearchFor.GetType().FullName)
                             equal = false;
                         else
-                            equal = (dynamic)rowValue == (dynamic)value;
+                            equal = (dynamic)rowValue == (dynamic)valueToSearchFor;
                         break;
                 }
 
-                if (equal)
-                    return row;
+                if (!equal)
+                    return false;
             }
 
-            return null;
+            return true;
         }
 
         private void CopyRow(DataRow sourceRow, DataRow targetRow, TableInfo tableInfo)
@@ -289,113 +303,42 @@ namespace TableSync
                 targetRow[columnInfo.ColumnName] = sourceRow[columnInfo.ColumnName];
         }
 
-        private string GetPrimaryCondition(ColumnInfo primaryColumnInfo, DataTable dataTable, bool negateCondition)
+        public void RemoveUnusedRows(Range range, DataTable workbookTable, SyncDefinition syncDefinition, Settings settings)
         {
-            var stringBuilder = new StringBuilder();
-
-            if (dataTable.Rows.Count == 0)
-            {
-                if (negateCondition)
-                    stringBuilder.Append("1=1");
-                else
-                    stringBuilder.Append("1=0");
-            }
-            else
-            {
-                stringBuilder.Append("[");
-                stringBuilder.Append(primaryColumnInfo.ColumnName);
-                stringBuilder.Append("] ");
-
-                if (negateCondition)
-                    stringBuilder.Append("not ");
-                stringBuilder.Append("in (");
-
-                var first = true;
-
-                foreach (DataRow Row in dataTable.Rows)
-                {
-                    var value = Row[primaryColumnInfo.ColumnName];
-
-                    if (value != DBNull.Value)
-                    {
-                        if (first)
-                            first = false;
-                        else
-                            stringBuilder.Append(",");
-
-                        switch (primaryColumnInfo.ColumnType)
-                        {
-                            case "System.String":
-                            case "System.Guid":
-                                {
-                                    stringBuilder.Append("'");
-                                    stringBuilder.Append(value);
-                                    stringBuilder.Append("'");
-                                    break;
-                                }
-
-                            default:
-                                {
-                                    stringBuilder.Append(value);
-                                    break;
-                                }
-                        }
-                    }
-                }
-                stringBuilder.Append(")");
-            }
-            
-            return stringBuilder.ToString();
-        }
-
-        public void UploadTableDelete(Range range, string tableName, DataTable dataTable, SyncDefinition syncDefinition, Settings settings)
-        {
-            TableInfo tableInfo = databaseInfo.TableInfos[tableName];
-            ColumnInfo primaryColumnInfo = tableInfo.PrimaryColumnInfo();
-
-            var stringBuilder = new StringBuilder();
-            stringBuilder.Append("delete from ");
-            stringBuilder.Append(tableInfo.FullTableName);
-
-            stringBuilder.Append(" where (");
-            stringBuilder.Append(GetPrimaryCondition(primaryColumnInfo, dataTable, true));
-            stringBuilder.Append(")");
-
-            if (range.HasCondition)
-            {
-                stringBuilder.Append(" and (");
-                stringBuilder.Append(GetCondition(range, syncDefinition, settings));
-                stringBuilder.Append(")");
-            }
-
-            var query = stringBuilder.ToString();
-
-            databaseContext.ExecuteNonQuery(query);
-        }
-
-        public void UploadTableInsertAndUpdate(string tableName, DataTable dataTable)
-        {
-            if (dataTable.Rows.Count < 1)
-                return;
-
-            TableInfo tableInfo = databaseInfo.TableInfos[tableName];
-            ColumnInfo primaryColumnInfo = tableInfo.PrimaryColumnInfo();
-
-            string query;
-
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("select * from ");
-            stringBuilder.Append(tableName);
-            stringBuilder.Append("where ");
-            stringBuilder.Append(GetPrimaryCondition(primaryColumnInfo, dataTable, false));
-
-            query = stringBuilder.ToString();
+            var query = GetQuery(range, DownloadType.Full, syncDefinition, settings);
+            var tableInfo = databaseInfo.TableInfos[range.FullTableName];
+            var primaryColumnInfos = tableInfo.PrimaryColumnInfos();
 
             using (var tableContext = databaseContext.GetTableContext(query))
             {
-                foreach (DataRow sourceRow in dataTable.Rows)
+                var databaseTable = tableContext.DataTable;
+
+                for (var rowIndex = databaseTable.Rows.Count - 1; rowIndex >= 0; rowIndex--)
                 {
-                    DataRow TargetRow = SearchRow(tableContext.DataTable, primaryColumnInfo, sourceRow[primaryColumnInfo.ColumnName]);
+                    var databaseRow = databaseTable.Rows[rowIndex];
+                    var workbookRow = SearchRow(workbookTable, primaryColumnInfos, databaseRow);
+                    if (workbookRow == null)
+                        databaseRow.Delete();
+                }
+
+                tableContext.Update();
+            }
+        }
+
+        public void InsertOrUpdateRows(Range range, DataTable workbookTable, SyncDefinition syncDefinition, Settings settings)
+        {
+            if (workbookTable.Rows.Count < 1)
+                return;
+
+            var query = GetQuery(range, DownloadType.Full, syncDefinition, settings);
+            var tableInfo = databaseInfo.TableInfos[range.FullTableName];
+            var primaryColumnInfos = tableInfo.PrimaryColumnInfos();
+
+            using (var tableContext = databaseContext.GetTableContext(query))
+            {
+                foreach (DataRow sourceRow in workbookTable.Rows)
+                {
+                    DataRow TargetRow = SearchRow(tableContext.DataTable, primaryColumnInfos, sourceRow);
                     if (TargetRow == null)
                     {
                         TargetRow = tableContext.DataTable.NewRow();

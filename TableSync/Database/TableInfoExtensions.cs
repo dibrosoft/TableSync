@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TableSync
 {
     public static class TableInfoExtensions
     {
-        public static ColumnInfo PrimaryColumnInfo(this TableInfo tableInfo)
+        public static IEnumerable<ColumnInfo> PrimaryColumnInfos(this TableInfo tableInfo)
         {
-            foreach (ColumnInfo columnInfo in tableInfo.ColumnInfos)
-            {
-                if (columnInfo.IsPrimary)
-                    return columnInfo;
-            }
-            return null;
+            return tableInfo.ColumnInfos.Where(item => item.IsPrimary).ToList();
         }
 
         public static TableInfo Create(string schema, string tableName, IEnumerable<ColumnInfo> ColumnSources)

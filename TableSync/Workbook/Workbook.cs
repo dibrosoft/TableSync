@@ -51,34 +51,36 @@ namespace TableSync
 
             using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, true))
             {
+                var ranges = databaseManager.ExecutableRanges;
+
                 try
                 {
-                    var dataTables = new Dictionary<string, DataTable>();
-                    foreach (var range in databaseManager.ExecutableRanges)
+                    var workbookTables = new Dictionary<string, DataTable>();
+                    foreach (var range in ranges)
                     {
                         databaseManager.UploadChecks(range);
 
-                        var dataTable = databaseManager.DownloadEmptyTableStructure(range, syncDefinition);
+                        var workbookTable = databaseManager.DownloadEmptyTableStructure(range, syncDefinition);
 
-                        CopyRangeToTable(range, dataTable);
+                        CopyRangeToTable(range, workbookTable);
 
-                        dataTables.Add(range.FullTableName, dataTable);
+                        workbookTables.Add(range.FullTableName, workbookTable);
                     }
 
-                    foreach (var tableName in databaseManager.SortDependantToIndependant(syncDefinition.Ranges))
+                    foreach (var fullTableName in databaseManager.FullTableNamesDependantToIndependant(ranges))
                     {
-                        var dataTable = dataTables[tableName];
+                        var workbookTable = workbookTables[fullTableName];
+                        var range = ranges.SearchByFullTableName(fullTableName);
 
-                        var range = syncDefinition.Ranges.Where(item => string.Compare(item.FullTableName, tableName, true) == 0).Single();
-
-                        databaseManager.UploadTableDelete(range, tableName, dataTable, syncDefinition, settings);
+                        databaseManager.RemoveUnusedRows(range, workbookTable, syncDefinition, settings);
                     }
 
-                    foreach (var tableName in databaseManager.SortIndependantToDependant(syncDefinition.Ranges))
+                    foreach (var fullTableName in databaseManager.FullTableNamesIndependantToDependant(ranges))
                     {
-                        var dataTable = dataTables[tableName];
+                        var workbookTable = workbookTables[fullTableName];
+                        var range = ranges.SearchByFullTableName(fullTableName);
 
-                        databaseManager.UploadTableInsertAndUpdate(tableName, dataTable);
+                        databaseManager.InsertOrUpdateRows(range, workbookTable, syncDefinition, settings);
                     }
 
                     databaseManager.Commit();

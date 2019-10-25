@@ -59,16 +59,6 @@ namespace TableSync
             }
         }
 
-        public void ExecuteNonQuery(string sql)
-        {
-            using (DbCommand command = connection.CreateCommand())
-            {
-                command.Transaction = transaction;
-                command.CommandText = sql;
-                command.ExecuteNonQuery();
-            }
-        }
-
         public TableContext GetTableContext(string sql)
         {
             return new TableContext(this, sql);
