@@ -276,21 +276,7 @@ namespace TableSync
                 var rowValue = row[column.ColumnName];
                 var valueToSearchFor = valuesToSearchFor[column.ColumnName];
 
-                bool equal;
-                switch (column.ColumnType)
-                {
-                    case "System.String":
-                        equal = string.Compare(Convert.ToString(rowValue), Convert.ToString(valueToSearchFor)) == 0;
-                        break;
-                    default:
-                        if (rowValue.GetType().FullName != valueToSearchFor.GetType().FullName)
-                            equal = false;
-                        else
-                            equal = (dynamic)rowValue == (dynamic)valueToSearchFor;
-                        break;
-                }
-
-                if (!equal)
+                if (!ValueComparer.AreEqual(rowValue, valueToSearchFor, column.ColumnType))
                     return false;
             }
 

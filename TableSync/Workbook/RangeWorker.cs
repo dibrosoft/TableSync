@@ -92,25 +92,9 @@ namespace TableSync
             {
                 var wsRowIndex = range.Orientation == RangeOrientation.Row ? rowIndex : colIndex;
                 var wsColIndex = range.Orientation == RangeOrientation.Row ? colIndex : rowIndex;
-                var wsValue = worksheet.Cells[wsRowIndex, wsColIndex].Value;
+                var workbookValue = worksheet.Cells[wsRowIndex, wsColIndex].Value;
 
-                if (wsValue == null)
-                    return DBNull.Value;
-
-                if (wsValue is string && string.IsNullOrEmpty(wsValue.ToString()))
-                    return DBNull.Value;
-
-                if (expectedType != null)
-                { 
-                    if (wsValue is double)
-                    {
-                        var dateTimeExpected = expectedType == typeof(DateTime);
-                        if (dateTimeExpected)
-                            wsValue = DateTime.FromOADate((double)wsValue);
-                    }
-                }
-
-                return wsValue;
+                return ValueConverter.WorkbookToDatabase(workbookValue, expectedType);
             }
             set
             {
@@ -120,12 +104,7 @@ namespace TableSync
                 if (keepFormula && !string.IsNullOrEmpty(worksheet.Cells[wsRowIndex, wsColIndex].Formula))
                     return;
 
-                if (value == DBNull.Value || (value is string && string.IsNullOrEmpty(value.ToString())))
-                    worksheet.Cells[wsRowIndex, wsColIndex].Value = null;
-                else if (value is DateTime)
-                    worksheet.Cells[wsRowIndex, wsColIndex].Value = ((DateTime)value).ToOADate();
-                else
-                    worksheet.Cells[wsRowIndex, wsColIndex].Value = value;
+                worksheet.Cells[wsRowIndex, wsColIndex].Value = ValueConverter.DatabaseToWorkbook(value);
 
                 if (rangeColumn != null && !string.IsNullOrEmpty(rangeColumn.DisplayNumberFormat))
                     worksheet.Cells[wsRowIndex, wsColIndex].Style.Numberformat.Format = rangeColumn.DisplayNumberFormat;
