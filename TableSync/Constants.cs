@@ -9,12 +9,12 @@ namespace TableSync
         public const string ColumnName = "ColumnName";
         public const string ConnectionString = "ConnectionString";
         public const string CustomNumberFormat = "CustomNumberFormat";
-        public const string CustomOperatorFormat = "CustomOperatorFormat";
         public const string Direction = "Direction";
         public const string Name = "Name";
         public const string Names = "Names";
         public const string NumberFormat = "NumberFormat";
         public const string Operator = "Operator";
+        public const string OperatorTemplate = "OperatorTemplate";
         public const string Orientation = "Orientation";
         public const string RangeColumns = "RangeColumns";
         public const string RangeCondition = "RangeCondition";
@@ -23,7 +23,6 @@ namespace TableSync
         public const string Ranges = "Ranges";
         public const string RangesFile = "RangesFile";
         public const string Schema = "Schema";
-        public const string SettingName = "SettingName";
         public const string Settings = "Settings";
         public const string TableName = "TableName";
         public const string TableSync = "TableSync";

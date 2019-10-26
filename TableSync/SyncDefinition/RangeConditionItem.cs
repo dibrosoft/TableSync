@@ -10,18 +10,19 @@ namespace TableSync
         [JsonConverter(typeof(StringEnumConverter))]
         public RangeConditionOperator Operator { get; set; }
 
-        public string SettingName { get; set; }
 
-        public string CustomOperatorFormat { get; set; }
+        public string OperatorTemplate { get; set; }
+
+        public object Value { get; set; }
 
         public RangeConditionItem Clone()
         {
             return new RangeConditionItem()
             {
                 Name = Name,
-                SettingName = SettingName,
+                Value = Value,
                 Operator = Operator,
-                CustomOperatorFormat = CustomOperatorFormat
+                OperatorTemplate = OperatorTemplate
             };
         }
     }

@@ -228,8 +228,8 @@ namespace TableSync
                 {
                     Name = row[Constants.ColumnName].ToString(),
                     Operator = (RangeConditionOperator)Enum.Parse(typeof(RangeConditionOperator), row[Constants.Operator].ToString()),
-                    SettingName = row[Constants.SettingName].ToString(),
-                    CustomOperatorFormat = row[Constants.CustomOperatorFormat] == DBNull.Value ? null : row[Constants.CustomOperatorFormat].ToString(),
+                    Value = row[Constants.Value] == DBNull.Value ? null : row[Constants.Value],
+                    OperatorTemplate = row[Constants.OperatorTemplate] == DBNull.Value ? null : row[Constants.OperatorTemplate].ToString(),
                 });
             }
 
@@ -241,7 +241,7 @@ namespace TableSync
                 result.Settings.Add(new Setting()
                 {
                     Name = row[Constants.Name].ToString(),
-                    Value = row[Constants.Value] == DBNull.Value ? null : row[Constants.Value].ToString(),
+                    Value = row[Constants.Value] == DBNull.Value ? null : row[Constants.Value],
                 });
             }
             return result;
@@ -298,8 +298,8 @@ namespace TableSync
                         newRow[Constants.RangeName] = range.Name;
                         newRow[Constants.ColumnName] = item.Name;
                         newRow[Constants.Operator] = item.Operator.ToString();
-                        newRow[Constants.SettingName] = item.SettingName;
-                        newRow[Constants.CustomOperatorFormat] = item.CustomOperatorFormat;
+                        newRow[Constants.Value] = item.Value;
+                        newRow[Constants.OperatorTemplate] = item.OperatorTemplate;
 
                         systemData.ConditionDT.Rows.Add(newRow);
                     }

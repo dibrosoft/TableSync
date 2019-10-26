@@ -107,35 +107,34 @@ namespace TableSync
                 else
                     stringBuilder.Append(" and ");
 
-
                 var fieldName = string.Format("[{0}]", item.Name);
 
-                var operatorFormat = string.Empty;
+                var operatorTemplate = string.Empty;
                 switch (item.Operator)
                 {
                     case RangeConditionOperator.Equal:
-                        operatorFormat = "{0}={1}";
+                        operatorTemplate = "{0}={1}";
                         break;
                     case RangeConditionOperator.Unequal:
-                        operatorFormat = "{0}<>{1}";
+                        operatorTemplate = "{0}<>{1}";
                         break;
                     case RangeConditionOperator.GreaterThan:
-                        operatorFormat = "{0}>{1}";
+                        operatorTemplate = "{0}>{1}";
                         break;
                     case RangeConditionOperator.GreaterThanOrEqual:
-                        operatorFormat = "{0}>={1}";
+                        operatorTemplate = "{0}>={1}";
                         break;
                     case RangeConditionOperator.LessThan:
-                        operatorFormat = "{0}<{1}";
+                        operatorTemplate = "{0}<{1}";
                         break;
                     case RangeConditionOperator.LessThanOrEqual:
-                        operatorFormat = "{0}<={1}";
+                        operatorTemplate = "{0}<={1}";
                         break;
                     case RangeConditionOperator.Like:
-                        operatorFormat = "{0} like {1}";
+                        operatorTemplate = "{0} like {1}";
                         break;
-                    case RangeConditionOperator.Custom:
-                        operatorFormat = item.CustomOperatorFormat;
+                    case RangeConditionOperator.Template:
+                        operatorTemplate = item.OperatorTemplate;
                         break;
                     default:
                         throw new InvalidEnumArgumentException();
@@ -143,37 +142,44 @@ namespace TableSync
 
                 var columnInfo = tableInfo.ColumnInfos[item.Name];
 
-                var settingNameInSettings = settings != null && settings.Contains(item.SettingName);
-                var settingNameInDefinitionSettings = syncDefinition.Settings != null && syncDefinition.Settings.Contains(item.SettingName);
-
-                if (!settingNameInSettings && !settingNameInDefinitionSettings)
-                    throw new MissingSettingException(item.SettingName);
-
-                var value = settingNameInSettings
-                    ? settings[item.SettingName].Value
-                    : syncDefinition.Settings[item.SettingName].Value;
-
-                if (value == null)
-                    throw new MissingSettingException(item.SettingName);
-
-                string formattedValue;
-
-                switch (columnInfo.ColumnType)
+                var value = item.Value;
+                if (value != null && value.GetType() == typeof(string))
                 {
-                    case "System.String":
-                        formattedValue = string.Format("'{0}'", value.ToString().Replace("'", "''"));
-                        break;
-                    case "System.DateTime":
-                        var typedValue = value.GetType() == typeof(string) ? DateTime.Parse(value.ToString()) : (DateTime)value;
+                    var parts = ((string)item.Value).Split('$');
+                    if (parts.Length == 2 && string.IsNullOrEmpty(parts[0]))
+                    {
+                        var settingName = parts[1];
+                        var settingNameInSettings = settings != null && settings.Contains(settingName);
+                        var settingNameInDefinitionSettings = syncDefinition.Settings != null && syncDefinition.Settings.Contains(settingName);
 
-                        formattedValue = string.Format("'{0}'", typedValue.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                        break;
-                    default:
-                        formattedValue = value.ToString();
-                        break;
+                        if (!settingNameInSettings && !settingNameInDefinitionSettings)
+                            throw new MissingSettingException(settingName);
+
+                        value = settingNameInSettings
+                            ? settings[settingName].Value
+                            : syncDefinition.Settings[settingName].Value;
+                    }
                 }
 
-                stringBuilder.Append(string.Format(operatorFormat, fieldName, formattedValue));
+                var formattedValue = string.Empty;
+
+                if (value != null)
+                    switch (columnInfo.ColumnType)
+                    {
+                        case "System.String":
+                            formattedValue = string.Format("'{0}'", value.ToString().Replace("'", "''"));
+                            break;
+                        case "System.DateTime":
+                            var typedValue = value.GetType() == typeof(string) ? DateTime.Parse(value.ToString()) : (DateTime)value;
+
+                            formattedValue = string.Format("'{0}'", typedValue.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                            break;
+                        default:
+                            formattedValue = value.ToString();
+                            break;
+                    }
+
+                stringBuilder.Append(string.Format(operatorTemplate, fieldName, formattedValue));
             }
 
             return stringBuilder.ToString();

@@ -9,7 +9,7 @@
         GreaterThan,
         GreaterThanOrEqual,
         Like,
-        Custom
+        Template
     }
 
 }
