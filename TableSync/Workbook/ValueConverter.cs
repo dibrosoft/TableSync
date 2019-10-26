@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.SqlServer.Types;
 
 namespace TableSync
 {
@@ -16,11 +15,22 @@ namespace TableSync
 
             if (expectedType != null)
             {
-                if (workbookValue is double)
+                switch (expectedType.FullName)
                 {
-                    var dateTimeExpected = expectedType == typeof(DateTime);
-                    if (dateTimeExpected)
-                        workbookValue = DateTime.FromOADate((double)workbookValue);
+                    case "Microsoft.SqlServer.Types.SqlGeography":
+                        return SqlGeography.Parse(new System.Data.SqlTypes.SqlString(workbookValue.ToString()));
+                    case "Microsoft.SqlServer.Types.SqlGeometry":
+                        return SqlGeometry.Parse(new System.Data.SqlTypes.SqlString(workbookValue.ToString()));
+                    case "Microsoft.SqlServer.Types.SqlHierachyId":
+                        return SqlHierarchyId.Parse(new System.Data.SqlTypes.SqlString(workbookValue.ToString()));
+                    default:
+                        if (workbookValue is double)
+                        {
+                            var dateTimeExpected = expectedType == typeof(DateTime);
+                            if (dateTimeExpected)
+                                return DateTime.FromOADate((double)workbookValue);
+                        }
+                        break;
                 }
             }
 
