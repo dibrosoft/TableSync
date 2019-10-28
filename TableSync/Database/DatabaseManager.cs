@@ -51,33 +51,31 @@ namespace TableSync
                 return tableContext.DataTable;
         }
 
-        private string GetQuery(Range range, DownloadType downloadType, SyncDefinition syncDefinition, Settings settings)
+        private QueryBuilder GetQuery(Range range, DownloadType downloadType, SyncDefinition syncDefinition, Settings settings)
         {
             TableInfo tableInfo = databaseInfo.TableInfos[range.FullTableName];
 
-            var stringBuilder = new StringBuilder();
-            stringBuilder.Append("select ");
+            var queryBuilder = new QueryBuilder();
 
-            AppendColumns(range, stringBuilder);
+            queryBuilder.Append("select ");
 
-            stringBuilder.Append(" from ");
-            stringBuilder.Append(tableInfo.FullTableName);
+            AppendColumns(range, queryBuilder);
+
+            queryBuilder.Append(" from ");
+            queryBuilder.Append(tableInfo.FullTableName);
 
             if (downloadType == DownloadType.OnlyStructure)
-                stringBuilder.Append(" where 1=0");
+                queryBuilder.Append(" where 1=0");
             else if (range.HasCondition)
-            {
-                stringBuilder.Append(" where ");
-                stringBuilder.Append(GetCondition(range, syncDefinition, settings));
-            }
+                AppendCondition(range, syncDefinition, settings, queryBuilder);
 
             if (range.HasOrder)
-                AppendOrder(range, stringBuilder);
+                AppendOrder(range, queryBuilder);
 
-            return stringBuilder.ToString();
+            return queryBuilder;
         }
 
-        private static void AppendColumns(Range range, StringBuilder stringBuilder)
+        private static void AppendColumns(Range range, QueryBuilder queryBuilder)
         {
             bool first = true;
             foreach (var item in range.Columns)
@@ -85,27 +83,27 @@ namespace TableSync
                 if (first)
                     first = false;
                 else
-                    stringBuilder.Append(",");
-                stringBuilder.Append("[");
-                stringBuilder.Append(item.Name);
-                stringBuilder.Append("]");
+                    queryBuilder.Append(",");
+                queryBuilder.Append("[");
+                queryBuilder.Append(item.Name);
+                queryBuilder.Append("]");
             }
         }
 
-        private string GetCondition(Range range, SyncDefinition syncDefinition, Settings settings)
+        private void AppendCondition(Range range, SyncDefinition syncDefinition, Settings settings, QueryBuilder queryBuilder)
         {
-            var stringBuilder = new StringBuilder();
 
-            bool first = true;
+            int parameterIndex = 0;
 
             var tableInfo = databaseInfo.TableInfos[range.FullTableName];
 
             foreach (var item in range.Condition)
             {
-                if (first)
-                    first = false;
+                parameterIndex++;
+                if (parameterIndex == 1)
+                    queryBuilder.Append(" where ");
                 else
-                    stringBuilder.Append(" and ");
+                    queryBuilder.Append(" and ");
 
                 var fieldName = string.Format("[{0}]", item.Name);
 
@@ -161,33 +159,16 @@ namespace TableSync
                     }
                 }
 
-                var formattedValue = string.Empty;
+                var parameterName = $"@value{parameterIndex}";
 
-                if (value != null)
-                    switch (columnInfo.ColumnType)
-                    {
-                        case "System.String":
-                            formattedValue = string.Format("'{0}'", value.ToString().Replace("'", "''"));
-                            break;
-                        case "System.DateTime":
-                            var typedValue = value.GetType() == typeof(string) ? DateTime.Parse(value.ToString()) : (DateTime)value;
-
-                            formattedValue = string.Format("'{0}'", typedValue.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                            break;
-                        default:
-                            formattedValue = value.ToString();
-                            break;
-                    }
-
-                stringBuilder.Append(string.Format(operatorTemplate, fieldName, formattedValue));
+                queryBuilder.Append(string.Format(operatorTemplate, fieldName, parameterName));
+                queryBuilder.Parameters.Add(new QueryParameter() { Name = parameterName, Value = value });
             }
-
-            return stringBuilder.ToString();
         }
 
-        private void AppendOrder(Range range, StringBuilder stringBuilder)
+        private void AppendOrder(Range range, QueryBuilder queryBuilder)
         {
-            stringBuilder.Append(" order by ");
+            queryBuilder.Append(" order by ");
             bool first = true;
 
             foreach (var item in range.Order)
@@ -195,14 +176,14 @@ namespace TableSync
                 if (first)
                     first = false;
                 else
-                    stringBuilder.Append(",");
+                    queryBuilder.Append(",");
 
-                stringBuilder.Append("[");
-                stringBuilder.Append(item.Name);
-                stringBuilder.Append("]");
+                queryBuilder.Append("[");
+                queryBuilder.Append(item.Name);
+                queryBuilder.Append("]");
 
                 if (item.Direction == OrderDirection.Descending)
-                    stringBuilder.Append(" desc");
+                    queryBuilder.Append(" desc");
             }
         }
 

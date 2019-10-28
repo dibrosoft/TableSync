@@ -59,9 +59,9 @@ namespace TableSync
             }
         }
 
-        public TableContext GetTableContext(string sql)
+        public TableContext GetTableContext(QueryBuilder queryBuilder)
         {
-            return new TableContext(this, sql);
+            return new TableContext(this, queryBuilder);
         }
 
         public DbCommand CreateCommand(string sql)
@@ -76,11 +76,16 @@ namespace TableSync
 
     public class TableContext : IDisposable
     {
-        public TableContext(DatabaseContext databaseContext, string sql)
+        public TableContext(DatabaseContext databaseContext, QueryBuilder queryBuilder)
         {
+            var command = databaseContext.CreateCommand(queryBuilder.Sql);
+
             dataAdapter = new SqlDataAdapter();
-            dataAdapter.SelectCommand = databaseContext.CreateCommand(sql);
-            
+            dataAdapter.SelectCommand = command;
+
+            foreach (var parameter in queryBuilder.Parameters)
+                dataAdapter.SelectCommand.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
+
             commandBuilder = new SqlCommandBuilder();
             commandBuilder.DataAdapter = dataAdapter;
 

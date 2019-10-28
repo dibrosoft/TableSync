@@ -55,7 +55,7 @@ namespace TableSync
                         var dataType = column["DATA_TYPE"].ToString();
                         var columnType = dataTypeMap.ContainsKey(dataType) ? dataTypeMap[dataType] : "System.Byte[]";
                         var isRequired = string.Compare(column["IS_NULLABLE"].ToString(), "NO", true) == 0;
-                        ColumnInfo NewColumnSource = new ColumnInfo(columnName, columnType, isRequired);
+                        ColumnInfo NewColumnSource = new ColumnInfo(columnName, columnType, dataType, isRequired);
 
                         if (tableName == null)
                         {

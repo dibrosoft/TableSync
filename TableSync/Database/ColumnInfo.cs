@@ -5,10 +5,11 @@ namespace TableSync
 {
     public class ColumnInfo
     {
-        public ColumnInfo(string columnName, string columnType, bool isRequired)
+        public ColumnInfo(string columnName, string columnType, string dataType, bool isRequired)
         {
             this.ColumnName = columnName;
             this.ColumnType = columnType;
+            this.DataType = dataType;
             this.IsRequired = isRequired;
             this.IsPrimary = false;
         }
@@ -17,6 +18,8 @@ namespace TableSync
         public string ColumnName { get; set; }
 
         public string ColumnType { get; set; }
+
+        public string DataType { get; set; }
 
         public bool IsRequired { get; set; }
 
