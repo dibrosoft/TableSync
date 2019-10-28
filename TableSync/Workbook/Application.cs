@@ -15,13 +15,18 @@ namespace TableSync
             this.connections = connections;
         }
 
-        public Workbook Open(string fileName, bool testExistence = true)
+        public Workbook CreateOrOpen(string fileName)
         {
-            if (testExistence && !File.Exists(fileName))
-                throw new FileNotFoundException(fileName);
-
             if (string.Compare(Path.GetExtension(fileName), ".xlsx", true) != 0)
                 throw new IllegalFileExtensionException(fileName, ".xlsx");
+
+            return new Workbook(connections, fileName);
+        }
+
+        public Workbook Open(string fileName)
+        {
+            if (!File.Exists(fileName))
+                throw new FileNotFoundException(fileName);
 
             return new Workbook(connections, fileName);
         }

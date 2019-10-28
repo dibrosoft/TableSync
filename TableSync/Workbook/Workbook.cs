@@ -247,7 +247,7 @@ namespace TableSync
             return result;
         }
 
-        public void UpdateDefinition(SyncDefinition syncDefinition, bool insertFullDefinition = false)
+        public void EmbedDefinition(SyncDefinition syncDefinition, bool insertFullDefinition = false)
         {
             var systemData = new SystemData();
 

@@ -108,6 +108,9 @@ namespace TSync
         [Verb("embed", HelpText = HelpText.Embed)]
         class EmbedOptions
         {
+            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
+            public string ConnectionStringOrName { get; set; }
+
             [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
@@ -192,7 +195,7 @@ namespace TSync
         private static int Download(DownloadOptions opts)
         {
             var application = serviceProvider.GetService<Application>();
-            using (var workbook = application.Open(opts.WorkbookFileName, false))
+            using (var workbook = application.CreateOrOpen(opts.WorkbookFileName))
             {
                 var syncDefinition = Application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
                 var settings = Application.GetSettingsOrDefault(opts.SettingsFileName);
@@ -232,13 +235,13 @@ namespace TSync
         private static int Embed(EmbedOptions opts)
         {
             var application = serviceProvider.GetService<Application>();
-            using (var workbook = application.Open(opts.WorkbookFileName, false))
+            using (var workbook = application.CreateOrOpen(opts.WorkbookFileName))
             {
                 var definition = Application.GetDefinitionOrDefault(opts.TableNames, opts.SyncDefinitionFileName);
                 if (definition == null)
                     throw new MissingSyncDefinitionException();
 
-                workbook.UpdateDefinition(definition, opts.FullDefinition);
+                workbook.EmbedDefinition(definition, opts.FullDefinition);
 
                 if (string.IsNullOrEmpty(opts.WorkbookOutputFileName))
                     workbook.Save();
