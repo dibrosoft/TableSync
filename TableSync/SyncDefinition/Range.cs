@@ -54,11 +54,11 @@ namespace TableSync
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public RangeOrientation Orientation { get; set; }
+        public Orientation Orientation { get; set; }
 
-        public RangeColumns Columns { get; set; }
-        public RangeOrder Order { get; set; }
-        public RangeCondition Condition { get; set; }
+        public Columns Columns { get; set; }
+        public Order Order { get; set; }
+        public Condition Condition { get; set; }
 
         [JsonIgnore()]
         public bool HasColumns { get { return Columns != null && Columns.Count > 0; } }

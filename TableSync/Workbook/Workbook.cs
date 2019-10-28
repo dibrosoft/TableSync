@@ -184,7 +184,7 @@ namespace TableSync
                     Name = row[Constants.RangeName].ToString(),
                     Schema = row[Constants.Schema] == DBNull.Value ? null : row[Constants.Schema].ToString(),
                     TableName = row[Constants.TableName] == DBNull.Value ? null : row[Constants.TableName].ToString(),
-                    Orientation = (RangeOrientation)Enum.Parse(typeof(RangeOrientation), row[Constants.Orientation].ToString())
+                    Orientation = (Orientation)Enum.Parse(typeof(Orientation), row[Constants.Orientation].ToString())
                 });
 
             foreach (DataRow row in systemData.ColumnsDT.Rows)
@@ -192,9 +192,9 @@ namespace TableSync
                 var rangeName = row[Constants.RangeName].ToString();
                 var range = result.Ranges[rangeName];
                 if (!range.HasColumns)
-                    range.Columns = new RangeColumns();
+                    range.Columns = new Columns();
 
-                range.Columns.Add(new RangeColumn()
+                range.Columns.Add(new Column()
                 {
                     Name = row[Constants.ColumnName].ToString(),
                     Title = row[Constants.Title] == DBNull.Value ? null : row[Constants.Title].ToString(),
@@ -208,12 +208,12 @@ namespace TableSync
                 var rangeName = row[Constants.RangeName].ToString();
                 var range = result.Ranges[rangeName];
                 if (!range.HasOrder)
-                    range.Order = new RangeOrder();
+                    range.Order = new Order();
 
-                range.Order.Add(new RangeOrderItem()
+                range.Order.Add(new OrderItem()
                 {
                     Name = row[Constants.ColumnName].ToString(),
-                    Direction = (RangeOrderDirection)Enum.Parse(typeof(RangeOrderDirection), row[Constants.Direction].ToString()),
+                    Direction = (OrderDirection)Enum.Parse(typeof(OrderDirection), row[Constants.Direction].ToString()),
                 });
             }
 
@@ -222,12 +222,12 @@ namespace TableSync
                 var rangeName = row[Constants.RangeName].ToString();
                 var range = result.Ranges[rangeName];
                 if (!range.HasCondition)
-                    range.Condition = new RangeCondition();
+                    range.Condition = new Condition();
 
-                range.Condition.Add(new RangeConditionItem()
+                range.Condition.Add(new ConditionItem()
                 {
                     Name = row[Constants.ColumnName].ToString(),
-                    Operator = (RangeConditionOperator)Enum.Parse(typeof(RangeConditionOperator), row[Constants.Operator].ToString()),
+                    Operator = (ConditionOperator)Enum.Parse(typeof(ConditionOperator), row[Constants.Operator].ToString()),
                     Value = row[Constants.Value] == DBNull.Value ? null : row[Constants.Value],
                     OperatorTemplate = row[Constants.OperatorTemplate] == DBNull.Value ? null : row[Constants.OperatorTemplate].ToString(),
                 });
@@ -396,9 +396,9 @@ namespace TableSync
             for (int colIndex = rangeWorker.FirstColumnIndex; colIndex <= rangeWorker.LastColumnIndex; colIndex++)
             {
                 var columnName = rangeWorker.GetColumnName(colIndex);
-                var rangeColumn = range.Columns?[columnName];
+                var column = range.Columns?[columnName];
 
-                rangeWorker[rangeWorker.FirstRowIndex, colIndex, rangeColumn: rangeColumn] = rangeColumn.DisplayTitle;
+                rangeWorker[rangeWorker.FirstRowIndex, colIndex, column: column] = column.DisplayTitle;
             }
 
             var rowIndex = rangeWorker.FirstRowIndex + 1;
@@ -407,9 +407,9 @@ namespace TableSync
                 for (int colIndex = rangeWorker.FirstColumnIndex; colIndex <= rangeWorker.LastColumnIndex; colIndex++)
                 {
                     var columnName = rangeWorker.GetColumnName(colIndex);
-                    var rangeColumn = range.Columns?[columnName];
+                    var column = range.Columns?[columnName];
 
-                    rangeWorker[rowIndex, colIndex, rangeColumn: rangeColumn, keepFormula: keepFormula] = row[columnName];
+                    rangeWorker[rowIndex, colIndex, column: column, keepFormula: keepFormula] = row[columnName];
                 }
 
                 rowIndex++;

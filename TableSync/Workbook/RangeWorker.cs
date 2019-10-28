@@ -43,7 +43,7 @@ namespace TableSync
         {
             get
             { 
-                return range.Orientation == RangeOrientation.Row ?
+                return range.Orientation == Orientation.Row ?
                     namedRange.Start.Row :
                     namedRange.Start.Column;
             }
@@ -53,7 +53,7 @@ namespace TableSync
         {
             get
             { 
-                return range.Orientation == RangeOrientation.Row ?
+                return range.Orientation == Orientation.Row ?
                     namedRange.End.Row :
                     namedRange.End.Column;
             }
@@ -62,7 +62,7 @@ namespace TableSync
         public int FirstColumnIndex
         {
             get { 
-                return range.Orientation == RangeOrientation.Row ?
+                return range.Orientation == Orientation.Row ?
                     namedRange.Start.Column :
                     namedRange.Start.Row;
             }
@@ -86,28 +86,28 @@ namespace TableSync
             return column.Name;
         }
 
-        public object this[int rowIndex, int colIndex, Type expectedType = null, RangeColumn rangeColumn = null, bool keepFormula = false]
+        public object this[int rowIndex, int colIndex, Type expectedType = null, Column column = null, bool keepFormula = false]
         {
             get
             {
-                var wsRowIndex = range.Orientation == RangeOrientation.Row ? rowIndex : colIndex;
-                var wsColIndex = range.Orientation == RangeOrientation.Row ? colIndex : rowIndex;
+                var wsRowIndex = range.Orientation == Orientation.Row ? rowIndex : colIndex;
+                var wsColIndex = range.Orientation == Orientation.Row ? colIndex : rowIndex;
                 var workbookValue = worksheet.Cells[wsRowIndex, wsColIndex].Value;
 
                 return ValueConverter.WorkbookToDatabase(workbookValue, expectedType);
             }
             set
             {
-                var wsRowIndex = range.Orientation == RangeOrientation.Row ? rowIndex : colIndex;
-                var wsColIndex = range.Orientation == RangeOrientation.Row ? colIndex : rowIndex;
+                var wsRowIndex = range.Orientation == Orientation.Row ? rowIndex : colIndex;
+                var wsColIndex = range.Orientation == Orientation.Row ? colIndex : rowIndex;
 
                 if (keepFormula && !string.IsNullOrEmpty(worksheet.Cells[wsRowIndex, wsColIndex].Formula))
                     return;
 
                 worksheet.Cells[wsRowIndex, wsColIndex].Value = ValueConverter.DatabaseToWorkbook(value);
 
-                if (rangeColumn != null && !string.IsNullOrEmpty(rangeColumn.DisplayNumberFormat))
-                    worksheet.Cells[wsRowIndex, wsColIndex].Style.Numberformat.Format = rangeColumn.DisplayNumberFormat;
+                if (column != null && !string.IsNullOrEmpty(column.DisplayNumberFormat))
+                    worksheet.Cells[wsRowIndex, wsColIndex].Style.Numberformat.Format = column.DisplayNumberFormat;
             }
         }
 
@@ -115,7 +115,7 @@ namespace TableSync
         {
             get
             { 
-                if (range.Orientation == RangeOrientation.Row)
+                if (range.Orientation == Orientation.Row)
                     return worksheet.Cells[startRow, startCol, endRow, endCol];
                 else
                     return worksheet.Cells[startCol, startRow, endCol, endRow];

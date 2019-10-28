@@ -3,21 +3,21 @@ using Newtonsoft.Json.Converters;
 
 namespace TableSync
 {
-    public class RangeConditionItem
+    public class ConditionItem
     {
         public string Name { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public RangeConditionOperator Operator { get; set; }
+        public ConditionOperator Operator { get; set; }
 
 
         public string OperatorTemplate { get; set; }
 
         public object Value { get; set; }
 
-        public RangeConditionItem Clone()
+        public ConditionItem Clone()
         {
-            return new RangeConditionItem()
+            return new ConditionItem()
             {
                 Name = Name,
                 Value = Value,

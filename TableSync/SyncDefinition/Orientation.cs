@@ -1,6 +1,6 @@
 ﻿namespace TableSync
 {
-    public enum RangeOrientation
+    public enum Orientation
     {
         Row,
         Column

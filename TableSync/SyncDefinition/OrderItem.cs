@@ -3,16 +3,16 @@ using Newtonsoft.Json.Converters;
 
 namespace TableSync
 {
-    public class RangeOrderItem
+    public class OrderItem
     {
         public string Name { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public RangeOrderDirection Direction { get; set; }
+        public OrderDirection Direction { get; set; }
 
-        public RangeOrderItem Clone()
+        public OrderItem Clone()
         {
-            return new RangeOrderItem()
+            return new OrderItem()
             {
                 Name = Name,
                 Direction = Direction

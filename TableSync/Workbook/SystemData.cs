@@ -16,52 +16,52 @@ namespace TableSync
                         Name = Constants.TableSync_Range,
                         Schema = Constants.TableSync,
                         TableName = Constants.Ranges,
-                        Columns = new RangeColumns()
+                        Columns = new Columns()
                         {
-                            new RangeColumn() { Name = Constants.RangeName },
-                            new RangeColumn() { Name = Constants.Schema },
-                            new RangeColumn() { Name = Constants.TableName },
-                            new RangeColumn() { Name = Constants.Orientation }
+                            new Column() { Name = Constants.RangeName },
+                            new Column() { Name = Constants.Schema },
+                            new Column() { Name = Constants.TableName },
+                            new Column() { Name = Constants.Orientation }
                         }
                     },
                     new Range()
                     {
                         Name = Constants.TableSync_Column,
                         Schema = Constants.TableSync,
-                        TableName = Constants.RangeColumns,
-                        Columns = new RangeColumns()
+                        TableName = Constants.Columns,
+                        Columns = new Columns()
                         {
-                            new RangeColumn() { Name = Constants.RangeName },
-                            new RangeColumn() { Name = Constants.ColumnName },
-                            new RangeColumn() { Name = Constants.Title },
-                            new RangeColumn() { Name = Constants.NumberFormat },
-                            new RangeColumn() { Name = Constants.CustomNumberFormat }
+                            new Column() { Name = Constants.RangeName },
+                            new Column() { Name = Constants.ColumnName },
+                            new Column() { Name = Constants.Title },
+                            new Column() { Name = Constants.NumberFormat },
+                            new Column() { Name = Constants.CustomNumberFormat }
                         }
                     },
                     new Range()
                     {
                         Name = Constants.TableSync_Order,
                         Schema = Constants.TableSync,
-                        TableName = Constants.RangeOrder,
-                        Columns = new RangeColumns()
+                        TableName = Constants.Order,
+                        Columns = new Columns()
                         {
-                            new RangeColumn() { Name = Constants.RangeName },
-                            new RangeColumn() { Name = Constants.ColumnName },
-                            new RangeColumn() { Name = Constants.Direction }
+                            new Column() { Name = Constants.RangeName },
+                            new Column() { Name = Constants.ColumnName },
+                            new Column() { Name = Constants.Direction }
                         }
                     },
                     new Range()
                     {
                         Name = Constants.TableSync_Condition,
                         Schema = Constants.TableSync,
-                        TableName = Constants.RangeCondition,
-                        Columns = new RangeColumns()
+                        TableName = Constants.Condition,
+                        Columns = new Columns()
                         {
-                            new RangeColumn() { Name = Constants.RangeName },
-                            new RangeColumn() { Name = Constants.ColumnName },
-                            new RangeColumn() { Name = Constants.Operator },
-                            new RangeColumn() { Name = Constants.Value },
-                            new RangeColumn() { Name = Constants.OperatorTemplate }
+                            new Column() { Name = Constants.RangeName },
+                            new Column() { Name = Constants.ColumnName },
+                            new Column() { Name = Constants.Operator },
+                            new Column() { Name = Constants.Value },
+                            new Column() { Name = Constants.OperatorTemplate }
                         }
                     },
                     new Range()
@@ -69,10 +69,10 @@ namespace TableSync
                         Name = Constants.TableSync_Setting,
                         Schema = Constants.TableSync,
                         TableName = Constants.Settings,
-                        Columns = new RangeColumns()
+                        Columns = new Columns()
                         {
-                            new RangeColumn() { Name = Constants.Name },
-                            new RangeColumn() { Name = Constants.Value }
+                            new Column() { Name = Constants.Name },
+                            new Column() { Name = Constants.Value }
                         }
                     }
                 }

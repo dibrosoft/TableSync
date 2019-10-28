@@ -7,6 +7,8 @@ namespace TableSync
     public static class Constants
     {
         public const string ColumnName = "ColumnName";
+        public const string Columns = "Columns";
+        public const string Condition = "Condition";
         public const string ConnectionString = "ConnectionString";
         public const string CustomNumberFormat = "CustomNumberFormat";
         public const string Direction = "Direction";
@@ -15,11 +17,9 @@ namespace TableSync
         public const string NumberFormat = "NumberFormat";
         public const string Operator = "Operator";
         public const string OperatorTemplate = "OperatorTemplate";
+        public const string Order = "Order";
         public const string Orientation = "Orientation";
-        public const string RangeColumns = "RangeColumns";
-        public const string RangeCondition = "RangeCondition";
         public const string RangeName = "RangeName";
-        public const string RangeOrder = "RangeOrder";
         public const string Ranges = "Ranges";
         public const string RangesFile = "RangesFile";
         public const string Schema = "Schema";

@@ -2,11 +2,11 @@
 
 namespace TableSync
 {
-    public class RangeCondition : Collection<RangeConditionItem>
+    public class Condition : Collection<ConditionItem>
     {
-        internal RangeCondition Clone()
+        internal Condition Clone()
         {
-            var result = new RangeCondition();
+            var result = new Condition();
 
             foreach (var item in this)
                 result.Add(item.Clone());

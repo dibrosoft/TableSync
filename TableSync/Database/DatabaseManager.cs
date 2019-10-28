@@ -26,9 +26,9 @@ namespace TableSync
                 if (!executableRange.HasColumns)
                 {
                     var tableInfo = databaseInfo.TableInfos[executableRange.FullTableName];
-                    var columns = new RangeColumns();
+                    var columns = new Columns();
                     foreach (var columnInfo in tableInfo.ColumnInfos)
-                        columns.Add(new RangeColumn() { Name = columnInfo.ColumnName });
+                        columns.Add(new Column() { Name = columnInfo.ColumnName });
 
                     executableRange.Columns = columns;
                 }
@@ -112,28 +112,28 @@ namespace TableSync
                 var operatorTemplate = string.Empty;
                 switch (item.Operator)
                 {
-                    case RangeConditionOperator.Equal:
+                    case ConditionOperator.Equal:
                         operatorTemplate = "{0}={1}";
                         break;
-                    case RangeConditionOperator.Unequal:
+                    case ConditionOperator.Unequal:
                         operatorTemplate = "{0}<>{1}";
                         break;
-                    case RangeConditionOperator.GreaterThan:
+                    case ConditionOperator.GreaterThan:
                         operatorTemplate = "{0}>{1}";
                         break;
-                    case RangeConditionOperator.GreaterThanOrEqual:
+                    case ConditionOperator.GreaterThanOrEqual:
                         operatorTemplate = "{0}>={1}";
                         break;
-                    case RangeConditionOperator.LessThan:
+                    case ConditionOperator.LessThan:
                         operatorTemplate = "{0}<{1}";
                         break;
-                    case RangeConditionOperator.LessThanOrEqual:
+                    case ConditionOperator.LessThanOrEqual:
                         operatorTemplate = "{0}<={1}";
                         break;
-                    case RangeConditionOperator.Like:
+                    case ConditionOperator.Like:
                         operatorTemplate = "{0} like {1}";
                         break;
-                    case RangeConditionOperator.Template:
+                    case ConditionOperator.Template:
                         operatorTemplate = item.OperatorTemplate;
                         break;
                     default:
@@ -201,7 +201,7 @@ namespace TableSync
                 stringBuilder.Append(item.Name);
                 stringBuilder.Append("]");
 
-                if (item.Direction == RangeOrderDirection.Descending)
+                if (item.Direction == OrderDirection.Descending)
                     stringBuilder.Append(" desc");
             }
         }

@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace TableSync
 {
-    public class RangeColumn
+    public class Column
     {
         public string Name { get; set; }
 
@@ -20,9 +20,9 @@ namespace TableSync
         [JsonIgnore()]
         public string DisplayNumberFormat { get { return NumberFormat == NumberFormat.Custom ? CustomNumberFormat : NumberFormat.FormatString(); } }
 
-        public RangeColumn Clone()
+        public Column Clone()
         {
-            return new RangeColumn()
+            return new Column()
             {
                 Name = Name,
                 Title = Title,

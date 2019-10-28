@@ -1,6 +1,6 @@
 ﻿namespace TableSync
 {
-    public enum RangeConditionOperator
+    public enum ConditionOperator
     {
         Equal,
         Unequal,

@@ -1,6 +1,6 @@
 ﻿namespace TableSync
 {
-    public enum RangeOrderDirection
+    public enum OrderDirection
     {
         Ascending,
         Descending
