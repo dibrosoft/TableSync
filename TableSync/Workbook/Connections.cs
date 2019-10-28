@@ -14,10 +14,12 @@ namespace TableSync
 
         public string GetProofedConnectionStringName(string connectionStringOrName)
         {
-            if (Contains(connectionStringOrName))
+            var isEmpty = string.IsNullOrEmpty(connectionStringOrName);
+
+            if (!isEmpty && Contains(connectionStringOrName))
                 return connectionStringOrName;
 
-            if (string.IsNullOrEmpty(connectionStringOrName) && Contains("Default"))
+            if (isEmpty && Contains("Default"))
                 return "Default";
 
             return null;

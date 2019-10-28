@@ -31,7 +31,7 @@ namespace TableSync
 
     public class MissingConnectionStringException : ExceptionBase
     {
-        public MissingConnectionStringException() : base("The connection string isn't configured. You can pass connection strings or names with the -c|--ConnectionStringOrName option. Use 'tsync info' to list the available connection string names.") { }
+        public MissingConnectionStringException() : base("The connection string isn't configured. You can pass connection strings or names with the -c|--ConnectionStringOrName option. Use 'tsync list' to list the available connection string names.") { }
     }
 
     public class MissingRequiredColumnException : ExceptionBase

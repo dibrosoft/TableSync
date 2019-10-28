@@ -80,14 +80,14 @@ namespace TableSync
         private static void AppendColumns(Range range, StringBuilder stringBuilder)
         {
             bool first = true;
-            foreach (var columnInfo in range.Columns)
+            foreach (var item in range.Columns)
             {
                 if (first)
                     first = false;
                 else
                     stringBuilder.Append(",");
                 stringBuilder.Append("[");
-                stringBuilder.Append(columnInfo.Name);
+                stringBuilder.Append(item.Name);
                 stringBuilder.Append("]");
             }
         }
