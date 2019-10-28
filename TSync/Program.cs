@@ -241,7 +241,7 @@ namespace TSync
                 if (definition == null)
                     throw new MissingSyncDefinitionException();
 
-                workbook.EmbedDefinition(definition, opts.FullDefinition);
+                workbook.EmbedDefinition(opts.ConnectionStringOrName, definition, opts.FullDefinition);
 
                 if (string.IsNullOrEmpty(opts.WorkbookOutputFileName))
                     workbook.Save();

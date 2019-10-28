@@ -23,10 +23,10 @@ namespace TableSync
 
         public void Download(string connectionStringOrName, bool keepFormula = false, SyncDefinition syncDefinition = null, Settings settings = null)
         {
-            var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
-
             if (syncDefinition == null)
                 syncDefinition = GetDefinition();
+
+            var connectionString = GetConnectionString(connectionStringOrName);
 
             using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
             {
@@ -44,10 +44,10 @@ namespace TableSync
 
         public void Upload(string connectionStringOrName, SyncDefinition syncDefinition = null, Settings settings = null)
         {
-            var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
-
             if (syncDefinition == null)
                 syncDefinition = GetDefinition();
+
+            var connectionString = GetConnectionString(connectionStringOrName);
 
             using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, true))
             {
@@ -104,7 +104,7 @@ namespace TableSync
                 syncDefinition = GetDefinition();
             }
 
-            var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
+            var connectionString = GetConnectionString(connectionStringOrName);
 
             using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
                 foreach (var range in databaseManager.ExecutableRanges)
@@ -247,100 +247,109 @@ namespace TableSync
             return result;
         }
 
-        public void EmbedDefinition(SyncDefinition syncDefinition, bool insertFullDefinition = false)
+        public void EmbedDefinition(string connectionStringOrName, SyncDefinition syncDefinition, bool fullDefinition = false)
         {
+            if (syncDefinition == null)
+                syncDefinition = GetDefinition();
+
             var systemData = new SystemData();
+            var connectionString = GetConnectionString(connectionStringOrName);
 
-            DataRow newRow;
-
-            foreach (var range in syncDefinition.Ranges)
+            using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
             {
-                newRow = systemData.RangeDT.NewRow();
+                DataRow newRow;
 
-                newRow[Constants.RangeName] = range.Name;
-                newRow[Constants.Schema] = range.Schema;
-                newRow[Constants.TableName] = range.TableName;
-                newRow[Constants.Orientation] = range.Orientation;
-
-                systemData.RangeDT.Rows.Add(newRow);
-
-                if (range.HasColumns)
-                    foreach (var item in range.Columns)
-                    {
-                        newRow = systemData.ColumnsDT.NewRow();
-
-                        newRow[Constants.RangeName] = range.Name;
-                        newRow[Constants.ColumnName] = item.Name;
-                        newRow[Constants.Title] = item.Title;
-                        newRow[Constants.NumberFormat] = item.NumberFormat.ToString();
-                        newRow[Constants.CustomNumberFormat] = item.CustomNumberFormat;
-
-                        systemData.ColumnsDT.Rows.Add(newRow);
-                    }
-
-                if (range.HasOrder)
-                    foreach (var item in range.Order)
-                    {
-                        newRow = systemData.OrderDT.NewRow();
-
-                        newRow[Constants.RangeName] = range.Name;
-                        newRow[Constants.ColumnName] = item.Name;
-                        newRow[Constants.Direction] = item.Direction.ToString();
-
-                        systemData.OrderDT.Rows.Add(newRow);
-                    }
-
-                if (range.HasCondition)
-                    foreach (var item in range.Condition)
-                    {
-                        newRow = systemData.ConditionDT.NewRow();
-
-                        newRow[Constants.RangeName] = range.Name;
-                        newRow[Constants.ColumnName] = item.Name;
-                        newRow[Constants.Operator] = item.Operator.ToString();
-                        newRow[Constants.Value] = item.Value;
-                        newRow[Constants.OperatorTemplate] = item.OperatorTemplate;
-
-                        systemData.ConditionDT.Rows.Add(newRow);
-                    }
-            }
-
-            if (syncDefinition.HasSettings)
-                foreach (var item in syncDefinition.Settings)
+                foreach (var syncRange in syncDefinition.Ranges)
                 {
-                    newRow = systemData.SettingDT.NewRow();
+                    var range = fullDefinition ? databaseManager.ExecutableRanges[syncRange.Name] : syncRange;
 
-                    newRow[Constants.Name] = item.Name;
-                    newRow[Constants.Value] = item.Value;
+                    newRow = systemData.RangeDT.NewRow();
 
-                    systemData.SettingDT.Rows.Add(newRow);
+                    newRow[Constants.RangeName] = range.Name;
+                    newRow[Constants.Schema] = range.Schema;
+                    newRow[Constants.TableName] = range.TableName;
+                    newRow[Constants.Orientation] = range.Orientation;
+
+                    systemData.RangeDT.Rows.Add(newRow);
+
+                    if (range.HasColumns)
+                        foreach (var item in range.Columns)
+                        {
+                            newRow = systemData.ColumnsDT.NewRow();
+
+                            newRow[Constants.RangeName] = range.Name;
+                            newRow[Constants.ColumnName] = item.Name;
+                            newRow[Constants.Title] = item.Title;
+                            newRow[Constants.NumberFormat] = item.NumberFormat.ToString();
+                            newRow[Constants.CustomNumberFormat] = item.CustomNumberFormat;
+
+                            systemData.ColumnsDT.Rows.Add(newRow);
+                        }
+
+                    if (range.HasOrder)
+                        foreach (var item in range.Order)
+                        {
+                            newRow = systemData.OrderDT.NewRow();
+
+                            newRow[Constants.RangeName] = range.Name;
+                            newRow[Constants.ColumnName] = item.Name;
+                            newRow[Constants.Direction] = item.Direction.ToString();
+
+                            systemData.OrderDT.Rows.Add(newRow);
+                        }
+
+                    if (range.HasCondition)
+                        foreach (var item in range.Condition)
+                        {
+                            newRow = systemData.ConditionDT.NewRow();
+
+                            newRow[Constants.RangeName] = range.Name;
+                            newRow[Constants.ColumnName] = item.Name;
+                            newRow[Constants.Operator] = item.Operator.ToString();
+                            newRow[Constants.Value] = item.Value;
+                            newRow[Constants.OperatorTemplate] = item.OperatorTemplate;
+
+                            systemData.ConditionDT.Rows.Add(newRow);
+                        }
                 }
 
+                if (syncDefinition.HasSettings)
+                    foreach (var item in syncDefinition.Settings)
+                    {
+                        newRow = systemData.SettingDT.NewRow();
 
-            if (systemData.RangeDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Range, systemData.RangeDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Range))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Range);
+                        newRow[Constants.Name] = item.Name;
+                        newRow[Constants.Value] = item.Value;
 
-            if (systemData.ColumnsDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Column, systemData.ColumnsDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Column))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Column);
+                        systemData.SettingDT.Rows.Add(newRow);
+                    }
 
-            if (systemData.OrderDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Order, systemData.OrderDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Order))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Order);
 
-            if (systemData.ConditionDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Condition, systemData.ConditionDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Condition))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Condition);
+                if (systemData.RangeDT.Rows.Count > 0 || fullDefinition)
+                    CopyTableToRange(systemData.Range, systemData.RangeDT);
+                else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Range))
+                    excelPackage.Workbook.Names.Remove(Constants.TableSync_Range);
 
-            if (systemData.SettingDT.Rows.Count > 0 || insertFullDefinition)
-                CopyTableToRange(systemData.Setting, systemData.SettingDT);
-            else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
-                excelPackage.Workbook.Names.Remove(Constants.TableSync_Setting);
+                if (systemData.ColumnsDT.Rows.Count > 0 || fullDefinition)
+                    CopyTableToRange(systemData.Column, systemData.ColumnsDT);
+                else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Column))
+                    excelPackage.Workbook.Names.Remove(Constants.TableSync_Column);
+
+                if (systemData.OrderDT.Rows.Count > 0 || fullDefinition)
+                    CopyTableToRange(systemData.Order, systemData.OrderDT);
+                else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Order))
+                    excelPackage.Workbook.Names.Remove(Constants.TableSync_Order);
+
+                if (systemData.ConditionDT.Rows.Count > 0 || fullDefinition)
+                    CopyTableToRange(systemData.Condition, systemData.ConditionDT);
+                else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Condition))
+                    excelPackage.Workbook.Names.Remove(Constants.TableSync_Condition);
+
+                if (systemData.SettingDT.Rows.Count > 0 || fullDefinition)
+                    CopyTableToRange(systemData.Setting, systemData.SettingDT);
+                else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
+                    excelPackage.Workbook.Names.Remove(Constants.TableSync_Setting);
+            }
         }
 
         public void Save()
@@ -352,6 +361,11 @@ namespace TableSync
         {
             var fileInfo = new FileInfo(fileName);
             excelPackage.SaveAs(fileInfo);
+        }
+
+        private string GetConnectionString(string connectionStringOrName)
+        {
+            return connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
         }
 
         private void CopyRangeToTable(Range range, DataTable dataTable)
@@ -395,7 +409,7 @@ namespace TableSync
                     var columnName = rangeWorker.GetColumnName(colIndex);
                     var rangeColumn = range.Columns?[columnName];
 
-                    rangeWorker[rowIndex, colIndex, rangeColumn : rangeColumn, keepFormula : keepFormula] = row[columnName];
+                    rangeWorker[rowIndex, colIndex, rangeColumn: rangeColumn, keepFormula: keepFormula] = row[columnName];
                 }
 
                 rowIndex++;
