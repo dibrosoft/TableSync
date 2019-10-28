@@ -41,7 +41,7 @@ namespace TableSync
 
     public class MissingSyncDefinitionException : ExceptionBase
     {
-        public MissingSyncDefinitionException() : base("The synchronisation definition is missing. If a workbook doesn't contain a synchronisation definition it is necessary to pass a definition with the option -n|--TableNames or -d|--DefinitionFileName. You can use 'tsync updatedef' to provide a workbook with a synchronisation definition.") { }
+        public MissingSyncDefinitionException() : base("The synchronisation definition is missing. If a workbook doesn't contain a synchronisation definition it is necessary to pass a definition with the option -n|--TableNames or -d|--DefinitionFileName. You can use 'tsync embed' to provide a workbook with a synchronisation definition.") { }
     }
 
     public class MissingSettingException : ExceptionBase

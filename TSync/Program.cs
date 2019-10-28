@@ -9,6 +9,28 @@ using TableSync;
 
 namespace TSync
 {
+
+    class HelpText
+    {
+        public const string Download = "Download data from sql database into workbook.";
+        public const string Upload = "Upload data from workbook into sql database.";
+        public const string Embed = "Embed synchronisation definition into workbook.";
+        public const string Resize = "Resize workbook ranges to fit to data.";
+        public const string List = "List names of synchronisation or database objects.";
+        public const string Info = "Get information about synchronisation or database objects in JSON format.";
+
+        public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. If you leave this option empty the name 'default' is assumed.";
+        public const string WorkbookFileName = "The workbook file name. Only the xlsx format is allowed.";
+        public const string TableNames = "Comma separated list of table names for a simple synchronisation definition. You can use the underscore character to prefix table names with a database scheme.";
+        public const string TableName = "Table name to list columns.";
+        public const string SyncDefinitionFileName = "File name of a synchronisation definiton (JSON).";
+        public const string SettingsFileName = "File name of additional settings (JSON).";
+        public const string WorkbookOutputFileName = "Optional output workbook file name. If used, the result of the operation is saved to this file. Otherwise the original workbook will be overwritten.";
+        public const string AutoResize = "Option to configure that 'resize' should always run before upload.";
+        public const string KeepFormula = "Option to configure that download will not overwrite formulas in the download area.";
+        public const string FullDefinition = "Option to embed a full instead of a simple synchronisation definition.";
+    }
+
     class Program
     {
         private static ServiceProvider serviceProvider;
@@ -36,106 +58,112 @@ namespace TSync
             serviceProvider = services.BuildServiceProvider();
         }
 
-        [Verb("upload", HelpText = "Upload data from workbook into sql database.")]
-        class UploadOptions
-        {
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = "The database connection string or name. You can use a full connection string or a name from tsync's appsettings.json. If you leave this option empty tsync will asume the name 'default' from it's appsettings.json.")]
-            public string ConnectionStringOrName { get; set; }
-
-            [Option('w', "WorkbookFileName", Required = true, HelpText = "The workbook file name. Only the xlsx format is allowed.")]
-            public string WorkbookFileName { get; set; }
-
-            [Option('n', "TableNames", Required = false, Separator = ',', HelpText = "Simple synchronisation definition with comma separated table names. You can use the underscore character to prefix table names with a database schema.")]
-            public IEnumerable<string> TableNames { get; set; }
-
-            [Option('d', "SyncDefinitionFileName", Required = false, HelpText = "A synchronisation definiton as JSON file.")]
-            public string SyncDefinitionFileName { get; set; }
-
-            [Option('s', "SettingsFileName", Required = false, HelpText = "Additional settings as JSON file.")]
-            public string SettingsFileName { get; set; }
-
-            [Option('a', "AutoResize", Required = false, Default = false, HelpText = "Use this option if 'resize' should always run before upload.")]
-            public bool AutoResize { get; set; }
-        }
-
-        [Verb("download", HelpText = "Download data from sql database into workbook.")]
+        [Verb("download", HelpText = HelpText.Download)]
         class DownloadOptions
         {
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = "The database connection string or name. You can use a full connection string or a name from tsync's appsettings.json. If you leave this option empty tsync will asume the name 'default' from it's appsettings.json.")]
+            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
-            [Option('w', "WorkbookFileName", Required = true, HelpText = "The workbook file name. Only the xlsx format is allowed.")]
+            [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", Required = false, Separator = ',', HelpText = "Simple synchronisation definition with comma separated table names. You can use the underscore character to prefix table names with a database schema.")]
+            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", Required = false, HelpText = "A synchronisation definiton as JSON file.")]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('s', "SettingsFileName", Required = false, HelpText = "Additional settings as JSON file.")]
+            [Option('s', "SettingsFileName", SetName = "extended", Required = false, HelpText = HelpText.SettingsFileName)]
             public string SettingsFileName { get; set; }
 
-            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = "An optional output workbook file name. If used the download is saved to this file. Otherwise the original workbook will be overwritten.")]
+            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = HelpText.WorkbookOutputFileName)]
             public string WorkbookOutputFileName { get; set; }
 
-            [Option('k', "KeepFormula", Required = false, Default = false, HelpText = "Download overwrites formulas in the download area. Use this option if you wan't to keep them.")]
+            [Option('k', "KeepFormula", Required = false, Default = false, HelpText = HelpText.KeepFormula)]
             public bool KeepFormula { get; set; }
         }
 
-        [Verb("updatedef", HelpText = "Insert or update synchronisation definition in workbook.")]
-        class UpdateDefinitionOptions
+        [Verb("upload", HelpText = HelpText.Upload)]
+        class UploadOptions
         {
-            [Option('w', "WorkbookFileName", Required = true, HelpText = "The workbook file name. Only the xlsx format is allowed.")]
+            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
+            public string ConnectionStringOrName { get; set; }
+
+            [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", Required = false, Separator = ',', HelpText = "Simple synchronisation definition with comma separated table names. You can use the underscore character to prefix table names with a database schema.")]
+            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", Required = false, HelpText = "A synchronisation definiton as JSON file.")]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = "An optional output workbook file name. If used the download is saved to this file. Otherwise the original workbook will be overwritten.")]
+            [Option('s', "SettingsFileName", SetName = "extended", Required = false, HelpText = HelpText.SettingsFileName)]
+            public string SettingsFileName { get; set; }
+
+            [Option('a', "AutoResize", Required = false, Default = false, HelpText = HelpText.AutoResize)]
+            public bool AutoResize { get; set; }
+        }
+
+        [Verb("embed", HelpText = HelpText.Embed)]
+        class EmbedOptions
+        {
+            [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
+            public string WorkbookFileName { get; set; }
+
+            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
+            public IEnumerable<string> TableNames { get; set; }
+
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
+            public string SyncDefinitionFileName { get; set; }
+
+            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = HelpText.WorkbookOutputFileName)]
             public string WorkbookOutputFileName { get; set; }
 
-            [Option('f', "InsertFullDefinition", Required = false, Default = false, HelpText = "Insert the full synchronisation definition. If true the parts of the definition currently not needed are also inserted into the workbook." )]
-            public bool InsertFullDefinition { get; set; }
+            [Option('f', "FullDefinition", Required = false, Default = false, HelpText = HelpText.FullDefinition )]
+            public bool FullDefinition { get; set; }
         }
 
-        [Verb("getdef", HelpText = "Get synchronisation definition from workbook.")]
-        class GetDefinitionOptions 
-        {
-            [Option('w', "WorkbookFileName", Required = true, HelpText = "The workbook file name. Only the xlsx format is allowed.")]
-            public string WorkbookFileName { get; set; }
-        }
-
-        [Verb("resize", HelpText = "Resize ranges to fit to data.")]
+        [Verb("resize", HelpText = HelpText.Resize)]
         class ResizeOptions
         {
-            [Option('w', "WorkbookFileName", Required = true, HelpText = "The workbook file name. Only the xlsx format is allowed.")]
+            [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", Required = false, Separator = ',', HelpText = "Simple synchronisation definition with comma separated table names. You can use the underscore character to prefix table names with a database schema.")]
+            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", Required = false, HelpText = "A synchronisation definiton as JSON file.")]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = "The database connection string or name to get table information about. You can use a full connection string or a name from tsync's appsettings.json. If you leave this option empty tsync will list the available names from appsettings.json.")]
+            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
-            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = "An optional output workbook file name. If used the download is saved to this file. Otherwise the original workbook will be overwritten.")]
+            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = HelpText.WorkbookOutputFileName)]
             public string WorkbookOutputFileName { get; set; }
         }
 
-        [Verb("info", HelpText = "Get information about connections and tables.")]
-        class InfoOptions
+        [Verb("list", HelpText = HelpText.List)]
+        class ListOptions
         {
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = "The database connection string or name to get table information about. You can use a full connection string or a name from tsync's appsettings.json. If you leave this option empty tsync will list the available names from appsettings.json.")]
+            [Option('w', "WorkbookFileName", SetName = "wb", HelpText = HelpText.WorkbookFileName)]
+            public string WorkbookFileName { get; set; }
+
+            [Option('c', "ConnectionStringOrName", SetName = "data", HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
-            [Option('t', "TableName", Required = false, HelpText = "The table name to get column information about. If you leave this option empty tsync will list the available tables.")]
+            [Option('t', "TableName", SetName = "data", HelpText = HelpText.TableName)]
             public string TableName { get; set; }
+        }
+
+        [Verb("info", HelpText = HelpText.Info)]
+        class InfoOptions
+        {
+            [Option('w', "WorkbookFileName", SetName = "wb", HelpText = HelpText.WorkbookFileName)]
+            public string WorkbookFileName { get; set; }
+
+            [Option('c', "ConnectionStringOrName", SetName = "data", HelpText = HelpText.ConnectionStringOrName)]
+            public string ConnectionStringOrName { get; set; }
         }
 
         static int Main(string[] args)
@@ -144,13 +172,13 @@ namespace TSync
 
             try
             {
-                return CommandLine.Parser.Default.ParseArguments<DownloadOptions, UploadOptions, UpdateDefinitionOptions, GetDefinitionOptions, ResizeOptions, InfoOptions>(args)
+                return CommandLine.Parser.Default.ParseArguments<DownloadOptions, UploadOptions, EmbedOptions, ResizeOptions, ListOptions, InfoOptions>(args)
                     .MapResult(
                         (DownloadOptions opts) => Download(opts),
                         (UploadOptions opts) => Upload(opts),
-                        (UpdateDefinitionOptions opts) => UpdateDefinition(opts),
-                        (GetDefinitionOptions opts) => GetDefinition(opts),
+                        (EmbedOptions opts) => Embed(opts),
                         (ResizeOptions opts) => Resize(opts),
+                        (ListOptions opts) => List(opts),
                         (InfoOptions opts) => Info(opts),
                         errs => ExitCode.Failed);
             }
@@ -201,7 +229,7 @@ namespace TSync
             return ExitCode.Success;
         }
 
-        private static int UpdateDefinition(UpdateDefinitionOptions opts)
+        private static int Embed(EmbedOptions opts)
         {
             var application = serviceProvider.GetService<Application>();
             using (var workbook = application.Open(opts.WorkbookFileName, false))
@@ -210,25 +238,12 @@ namespace TSync
                 if (definition == null)
                     throw new MissingSyncDefinitionException();
 
-                workbook.UpdateDefinition(definition, opts.InsertFullDefinition);
+                workbook.UpdateDefinition(definition, opts.FullDefinition);
 
                 if (string.IsNullOrEmpty(opts.WorkbookOutputFileName))
                     workbook.Save();
                 else
                     workbook.SaveAs(opts.WorkbookOutputFileName);
-            }
-
-            return ExitCode.Success;
-        }
-
-        private static int GetDefinition(GetDefinitionOptions opts)
-        {
-            var application = serviceProvider.GetService<Application>();
-            using (var workbook = application.Open(opts.WorkbookFileName))
-            {
-                var definition = workbook.GetDefinition();
-                var text = MyJsonConvert.SerializeObject(definition);
-                Console.Out.Write(text);
             }
 
             return ExitCode.Success;
@@ -252,10 +267,18 @@ namespace TSync
             return ExitCode.Success;
         }
 
+        private static int List(ListOptions opts)
+        {
+            var application = serviceProvider.GetService<Application>();
+            Console.Out.Write(application.List(opts.ConnectionStringOrName, opts.TableName, opts.WorkbookFileName));
+
+            return ExitCode.Success;
+        }
+
         private static int Info(InfoOptions opts)
         {
             var application = serviceProvider.GetService<Application>();
-            Console.Out.Write(application.Info(opts.ConnectionStringOrName, opts.TableName));
+            Console.Out.Write(application.Info(opts.ConnectionStringOrName, opts.WorkbookFileName));
 
             return ExitCode.Success;
         }

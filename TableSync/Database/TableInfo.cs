@@ -26,6 +26,7 @@ namespace TableSync
         public string TableName { get; set; }
 
         public string FullTableName { get { return CreateSqlTableName(Schema, TableName); } }
+        public string RangeTableName { get { return CreateRangeTableName(Schema, TableName); } }
 
         public ColumnInfos ColumnInfos { get; set; } = new ColumnInfos();
         public DependsOn DependsOn { get; set; } = new DependsOn();
@@ -38,6 +39,17 @@ namespace TableSync
                 sb.Append($"[{schema}].");
 
             sb.Append($"[{tableName}]");
+
+            return sb.ToString();
+        }
+        public static string CreateRangeTableName(string schema, string tableName)
+        {
+            var sb = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(schema) && string.Compare(schema, "dbo", true) != 0)
+                sb.Append($"{schema}_");
+
+            sb.Append(tableName);
 
             return sb.ToString();
         }

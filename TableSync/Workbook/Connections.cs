@@ -12,24 +12,28 @@ namespace TableSync
             return item.Name;
         }
 
-        public string GetConnectionString(string connectionStringOrName)
+        public string GetProofedConnectionStringName(string connectionStringOrName)
         {
-            if (!string.IsNullOrEmpty(connectionStringOrName))
-            {
-                var valueIsName = this != null && this.Contains(connectionStringOrName);
-                if (!valueIsName)
-                    return connectionStringOrName;
+            if (Contains(connectionStringOrName))
+                return connectionStringOrName;
 
-                return this[connectionStringOrName].ConnectionString;
-            }
+            if (string.IsNullOrEmpty(connectionStringOrName) && Contains("Default"))
+                return "Default";
 
-            var connectionsContainDefault = this != null && this.Contains("Default");
-            if (connectionsContainDefault)
-                return this["Default"].ConnectionString;
-
-            throw new MissingConnectionStringException();
+            return null;
         }
 
+        public string GetConnectionString(string connectionStringOrName)
+        {
+            var connectionStringName = GetProofedConnectionStringName(connectionStringOrName);
+            if (connectionStringName != null)
+                return this[connectionStringName].ConnectionString;
+
+            if (string.IsNullOrEmpty(connectionStringOrName))
+                throw new MissingConnectionStringException();
+
+            return connectionStringOrName;
+        }
     }
 
     public class Connection
