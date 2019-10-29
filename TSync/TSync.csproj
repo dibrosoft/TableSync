@@ -6,7 +6,9 @@
     <UserSecretsId>97965cce-08b7-4d5a-9a42-d59c2f939018</UserSecretsId>
     <RootNamespace>TSync</RootNamespace>
     <AssemblyName>TSync</AssemblyName>
-  </PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackAsTool>true</PackAsTool>
+</PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>NU1701;NU1702</NoWarn>
