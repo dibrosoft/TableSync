@@ -19,8 +19,8 @@ namespace TSync
         public const string List = "List names of synchronisation or database objects.";
         public const string Info = "Get information about synchronisation or database objects in JSON format.";
 
-        public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. If you leave this option empty the name 'default' is assumed.";
-        public const string WorkbookFileName = "The workbook file name. Only the xlsx format is allowed.";
+        public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. You can query the registered connection string s with 'tsync list'.";
+        public const string WorkbookFileName = "The file name of a new or existing workbook. Only the xlsx format is supported.";
         public const string TableNames = "Comma separated list of table names for a simple synchronisation definition. You can use the underscore character to prefix table names with a database scheme.";
         public const string TableName = "Table name to list columns.";
         public const string SyncDefinitionFileName = "File name of a synchronisation definiton (JSON).";
@@ -61,69 +61,69 @@ namespace TSync
         [Verb("download", HelpText = HelpText.Download)]
         class DownloadOptions
         {
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
+            [Option('c', "ConnectionStringOrName", Required = true, HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
             [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
+            [Option('n', "TableNames", SetName = "simple", Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('s', "SettingsFileName", SetName = "extended", Required = false, HelpText = HelpText.SettingsFileName)]
+            [Option('s', "SettingsFileName", SetName = "extended", HelpText = HelpText.SettingsFileName)]
             public string SettingsFileName { get; set; }
 
-            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = HelpText.WorkbookOutputFileName)]
+            [Option('o', "WorkbookOutputFileName", HelpText = HelpText.WorkbookOutputFileName)]
             public string WorkbookOutputFileName { get; set; }
 
-            [Option('k', "KeepFormula", Required = false, Default = false, HelpText = HelpText.KeepFormula)]
+            [Option('k', "KeepFormula", Default = false, HelpText = HelpText.KeepFormula)]
             public bool KeepFormula { get; set; }
         }
 
         [Verb("upload", HelpText = HelpText.Upload)]
         class UploadOptions
         {
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
+            [Option('c', "ConnectionStringOrName", Required = true, HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
             [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
+            [Option('n', "TableNames", SetName = "simple", Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('s', "SettingsFileName", SetName = "extended", Required = false, HelpText = HelpText.SettingsFileName)]
+            [Option('s', "SettingsFileName", SetName = "extended", HelpText = HelpText.SettingsFileName)]
             public string SettingsFileName { get; set; }
 
-            [Option('a', "AutoResize", Required = false, Default = false, HelpText = HelpText.AutoResize)]
+            [Option('a', "AutoResize", Default = false, HelpText = HelpText.AutoResize)]
             public bool AutoResize { get; set; }
         }
 
         [Verb("embed", HelpText = HelpText.Embed)]
         class EmbedOptions
         {
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
+            [Option('c', "ConnectionStringOrName", Required = true, HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
             [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
+            [Option('n', "TableNames", SetName = "simple", Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = HelpText.WorkbookOutputFileName)]
+            [Option('o', "WorkbookOutputFileName", HelpText = HelpText.WorkbookOutputFileName)]
             public string WorkbookOutputFileName { get; set; }
 
-            [Option('f', "FullDefinition", Required = false, Default = false, HelpText = HelpText.FullDefinition )]
+            [Option('f', "FullDefinition", Default = false, HelpText = HelpText.FullDefinition )]
             public bool FullDefinition { get; set; }
         }
 
@@ -133,16 +133,16 @@ namespace TSync
             [Option('w', "WorkbookFileName", Required = true, HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
 
-            [Option('n', "TableNames", SetName = "simple", Required = false, Separator = ',', HelpText = HelpText.TableNames)]
+            [Option('n', "TableNames", SetName = "simple", Separator = ',', HelpText = HelpText.TableNames)]
             public IEnumerable<string> TableNames { get; set; }
 
-            [Option('d', "SyncDefinitionFileName", SetName = "extended", Required = false, HelpText = HelpText.SyncDefinitionFileName)]
+            [Option('d', "SyncDefinitionFileName", SetName = "extended", HelpText = HelpText.SyncDefinitionFileName)]
             public string SyncDefinitionFileName { get; set; }
 
-            [Option('c', "ConnectionStringOrName", Required = false, HelpText = HelpText.ConnectionStringOrName)]
+            [Option('c', "ConnectionStringOrName", HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
-            [Option('o', "WorkbookOutputFileName", Required = false, HelpText = HelpText.WorkbookOutputFileName)]
+            [Option('o', "WorkbookOutputFileName", HelpText = HelpText.WorkbookOutputFileName)]
             public string WorkbookOutputFileName { get; set; }
         }
 

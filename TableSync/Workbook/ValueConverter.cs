@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using Microsoft.SqlServer.Types;
 
 namespace TableSync
@@ -18,18 +19,15 @@ namespace TableSync
                 switch (expectedType.FullName)
                 {
                     case "Microsoft.SqlServer.Types.SqlGeography":
-                        return SqlGeography.Parse(new System.Data.SqlTypes.SqlString(workbookValue.ToString()));
+                        return SqlGeography.Parse(new SqlString(workbookValue.ToString()));
                     case "Microsoft.SqlServer.Types.SqlGeometry":
-                        return SqlGeometry.Parse(new System.Data.SqlTypes.SqlString(workbookValue.ToString()));
+                        return SqlGeometry.Parse(new SqlString(workbookValue.ToString()));
                     case "Microsoft.SqlServer.Types.SqlHierachyId":
-                        return SqlHierarchyId.Parse(new System.Data.SqlTypes.SqlString(workbookValue.ToString()));
-                    default:
+                        return SqlHierarchyId.Parse(new SqlString(workbookValue.ToString()));
+                    case "System.DateTime":
                         if (workbookValue is double)
-                        {
-                            var dateTimeExpected = expectedType == typeof(DateTime);
-                            if (dateTimeExpected)
-                                return DateTime.FromOADate((double)workbookValue);
-                        }
+                            return DateTime.FromOADate((double)workbookValue);
+
                         break;
                 }
             }

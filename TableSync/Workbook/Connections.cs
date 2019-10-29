@@ -19,9 +19,6 @@ namespace TableSync
             if (!isEmpty && Contains(connectionStringOrName))
                 return connectionStringOrName;
 
-            if (isEmpty && Contains("Default"))
-                return "Default";
-
             return null;
         }
 
