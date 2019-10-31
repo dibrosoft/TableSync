@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>NU1701;NU1702</NoWarn>
+    <NoWarn></NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
