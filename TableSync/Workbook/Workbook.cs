@@ -184,7 +184,7 @@ namespace TableSync
                     Name = row[Constants.RangeName].ToString(),
                     Schema = row[Constants.Schema] == DBNull.Value ? null : row[Constants.Schema].ToString(),
                     TableName = row[Constants.TableName] == DBNull.Value ? null : row[Constants.TableName].ToString(),
-                    Orientation = Enum.Parse<Orientation>(row[Constants.Orientation].ToString())
+                    Orientation = (Orientation)Enum.Parse(typeof(Orientation), row[Constants.Orientation].ToString())
                 });
 
             foreach (DataRow row in systemData.ColumnsDT.Rows)
@@ -198,7 +198,7 @@ namespace TableSync
                 {
                     Name = row[Constants.ColumnName].ToString(),
                     Title = row[Constants.Title] == DBNull.Value ? null : row[Constants.Title].ToString(),
-                    NumberFormat = Enum.Parse<NumberFormat>(row[Constants.NumberFormat].ToString()),
+                    NumberFormat = (NumberFormat)Enum.Parse(typeof(NumberFormat), row[Constants.NumberFormat].ToString()),
                     CustomNumberFormat = row[Constants.CustomNumberFormat] == DBNull.Value ? null : row[Constants.CustomNumberFormat].ToString(),
                 });
             }
@@ -213,7 +213,7 @@ namespace TableSync
                 range.Order.Add(new OrderItem()
                 {
                     Name = row[Constants.ColumnName].ToString(),
-                    Direction = Enum.Parse<OrderDirection>(row[Constants.Direction].ToString()),
+                    Direction = (OrderDirection)Enum.Parse(typeof(OrderDirection), row[Constants.Direction].ToString()),
                 });
             }
 
@@ -227,7 +227,7 @@ namespace TableSync
                 range.Condition.Add(new ConditionItem()
                 {
                     Name = row[Constants.ColumnName].ToString(),
-                    Operator = Enum.Parse<ConditionOperator>(row[Constants.Operator].ToString()),
+                    Operator = (ConditionOperator)Enum.Parse(typeof(ConditionOperator), row[Constants.Operator].ToString()),
                     Value = row[Constants.Value] == DBNull.Value ? null : row[Constants.Value],
                     OperatorTemplate = row[Constants.OperatorTemplate] == DBNull.Value ? null : row[Constants.OperatorTemplate].ToString(),
                 });
