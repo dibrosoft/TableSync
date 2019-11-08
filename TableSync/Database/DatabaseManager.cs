@@ -159,6 +159,9 @@ namespace TableSync
                     }
                 }
 
+                if (string.Compare(columnInfo.ColumnType, "System.DateTime", true) == 0 && value is string)
+                    value = DateTime.Parse(value.ToString());
+
                 var parameterName = $"@value{parameterIndex}";
 
                 queryBuilder.Append(string.Format(operatorTemplate, fieldName, parameterName));
