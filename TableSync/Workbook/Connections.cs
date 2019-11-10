@@ -22,27 +22,41 @@ namespace TableSync
             return null;
         }
 
-        public string GetConnectionString(string connectionStringOrName)
+        public ConnectionInfo GetConnectionInfo(string connectionStringOrName)
+        {
+            if (this == null)
+                return CreateInfoFromConnectionString(connectionStringOrName);
+
+            var connectionStringName = GetProofedConnectionStringName(connectionStringOrName);
+            if (connectionStringName != null)
+                return new ConnectionInfo()
+                {
+                    ConnectionString = this[connectionStringName].ConnectionString,
+                    ReservedTableNames = this[connectionStringName].ReservedTableNames
+                };
+
+            return CreateInfoFromConnectionString(connectionStringOrName);
+        }
+
+        private ConnectionInfo CreateInfoFromConnectionString(string connectionString)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+                throw new MissingConnectionStringException();
+
+            return new ConnectionInfo()
+            {
+                ConnectionString = connectionString,
+                ReservedTableNames = new ReservedTableNames()
+            };
+        }
+
+        public ReservedTableNames GetReservedTableNames(string connectionStringOrName)
         {
             var connectionStringName = GetProofedConnectionStringName(connectionStringOrName);
             if (connectionStringName != null)
-                return this[connectionStringName].ConnectionString;
+                return this[connectionStringName].ReservedTableNames;
 
-            if (string.IsNullOrEmpty(connectionStringOrName))
-                throw new MissingConnectionStringException();
-
-            return connectionStringOrName;
-        }
-    }
-
-    public class Connection
-    {
-        public string Name { get; set; }
-        public string ConnectionString { get; set; }
-
-        public override string ToString()
-        {
-            return Name;
+            return new ReservedTableNames();
         }
     }
 }

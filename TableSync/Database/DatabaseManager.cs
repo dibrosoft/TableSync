@@ -15,9 +15,9 @@ namespace TableSync
 
     public class DatabaseManager : IDisposable
     {
-        public DatabaseManager(string connectionString, SyncDefinition syncDefinition, bool startTransaction)
+        public DatabaseManager(ConnectionInfo connectionInfo, SyncDefinition syncDefinition, bool startTransaction)
         {
-            databaseInfo = new DatabaseInfo(connectionString, syncDefinition.TablesOfInterest);
+            databaseInfo = new DatabaseInfo(connectionInfo, syncDefinition.TablesOfInterest);
 
             ExecutableRanges = new Ranges();
             foreach (var range in syncDefinition.Ranges)
@@ -35,7 +35,7 @@ namespace TableSync
                 ExecutableRanges.Add(executableRange);
             }
 
-            databaseContext = new DatabaseContext(connectionString, startTransaction);
+            databaseContext = new DatabaseContext(connectionInfo.ConnectionString, startTransaction);
         }
 
         private DatabaseInfo databaseInfo;

@@ -67,8 +67,8 @@ namespace TableSync
             }
             else
             {
-                var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
-                var databaseInfo = new DatabaseInfo(connectionString);
+                var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
+                var databaseInfo = new DatabaseInfo(connectionInfo);
 
                 if (string.IsNullOrEmpty(tableName))
                 {
@@ -109,10 +109,10 @@ namespace TableSync
                     return MyJsonConvert.SerializeObject(wb.GetDefinition());
 
             if (string.IsNullOrEmpty(connectionStringOrName))
-                return MyJsonConvert.SerializeObject(connections.Select(item => item.Name).ToList());
+                return MyJsonConvert.SerializeObject(connections.ToList());
 
-            var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
-            var databaseInfo = new DatabaseInfo(connectionString);
+            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
+            var databaseInfo = new DatabaseInfo(connectionInfo);
 
             if (string.IsNullOrEmpty(tableName))
                 return MyJsonConvert.SerializeObject(databaseInfo);

@@ -26,9 +26,9 @@ namespace TableSync
             if (syncDefinition == null)
                 syncDefinition = GetDefinition();
 
-            var connectionString = GetConnectionString(connectionStringOrName);
+            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
 
-            using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
+            using (var databaseManager = new DatabaseManager(connectionInfo, syncDefinition, false))
             {
                 foreach (var range in databaseManager.ExecutableRanges)
                 {
@@ -47,9 +47,9 @@ namespace TableSync
             if (syncDefinition == null)
                 syncDefinition = GetDefinition();
 
-            var connectionString = GetConnectionString(connectionStringOrName);
+            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
 
-            using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, true))
+            using (var databaseManager = new DatabaseManager(connectionInfo, syncDefinition, true))
             {
                 var ranges = databaseManager.ExecutableRanges;
 
@@ -104,9 +104,9 @@ namespace TableSync
                 syncDefinition = GetDefinition();
             }
 
-            var connectionString = GetConnectionString(connectionStringOrName);
+            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
 
-            using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
+            using (var databaseManager = new DatabaseManager(connectionInfo, syncDefinition, false))
                 foreach (var range in databaseManager.ExecutableRanges)
                 {
                     var rangeChanges = ResizeRange(range);
@@ -253,9 +253,9 @@ namespace TableSync
                 syncDefinition = GetDefinition();
 
             var systemData = new SystemData();
-            var connectionString = GetConnectionString(connectionStringOrName);
+            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
 
-            using (var databaseManager = new DatabaseManager(connectionString, syncDefinition, false))
+            using (var databaseManager = new DatabaseManager(connectionInfo, syncDefinition, false))
             {
                 DataRow newRow;
 
@@ -361,11 +361,6 @@ namespace TableSync
         {
             var fileInfo = new FileInfo(fileName);
             excelPackage.SaveAs(fileInfo);
-        }
-
-        private string GetConnectionString(string connectionStringOrName)
-        {
-            return connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
         }
 
         private void CopyRangeToTable(Range range, DataTable dataTable)

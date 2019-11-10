@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TSync": {
+      "commandName": "Project",
+      "commandLineArgs": "info -c EconomicsPortalAzure"
+    }
+  }
+}

@@ -11,9 +11,13 @@ namespace TableSync
     {
         public TableInfos TableInfos { get; set; } = new TableInfos();
 
-        public DatabaseInfo(string connectionString, HashSet<string> tablesOfInterest = null)
+        private ConnectionInfo connectionInfo;
+
+        public DatabaseInfo(ConnectionInfo connectionInfo, HashSet<string> tablesOfInterest = null)
         {
-            using (var connection = new SqlConnection(connectionString))
+            this.connectionInfo= connectionInfo;
+
+            using (var connection = new SqlConnection(connectionInfo.ConnectionString))
             {
                 connection.Open();
 
@@ -33,11 +37,6 @@ namespace TableSync
            return TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0).SingleOrDefault();
         }
 
-        private static HashSet<string> reservedTableNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
-        {
-            "__EFMigrationsHistory"
-        };
-
         private void GenerateTableInfos(SqlConnection connection, HashSet<string> tablesOfInterest)
         {
             var dataTypeMap = GenerateDataTypeMap(connection);
@@ -54,7 +53,7 @@ namespace TableSync
                 var newSchema = column["TABLE_SCHEMA"].ToString();
                 var newTableName = column["TABLE_NAME"].ToString();
 
-                if (!reservedTableNames.Contains(newTableName))
+                if (!connectionInfo.IsReservedTableName(newTableName))
                 {
                     var newFullTableName = TableInfo.CreateSqlTableName(newSchema, newTableName);
                     if (tablesOfInterest == null || tablesOfInterest.Contains(newFullTableName))
