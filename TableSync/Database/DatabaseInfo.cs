@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Globalization;
+using System.Linq;
 
 namespace TableSync
 {
@@ -22,6 +23,14 @@ namespace TableSync
 
                 CheckForTablesOfInterest(tablesOfInterest);
             }
+        }
+
+        public TableInfo SearchTableInfo(string tableName)
+        {
+            if (TableInfos.Contains(tableName))
+                return TableInfos[tableName];
+
+           return TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0).SingleOrDefault();
         }
 
         private static HashSet<string> reservedTableNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)

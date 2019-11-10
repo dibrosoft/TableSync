@@ -16,13 +16,13 @@ namespace TSync
         public const string Upload = "Upload data from workbook into sql database.";
         public const string Embed = "Embed synchronisation definition into workbook.";
         public const string Resize = "Resize workbook ranges to fit to data.";
-        public const string List = "List names of synchronisation or database objects.";
-        public const string Info = "Get information about synchronisation or database objects in JSON format.";
+        public const string Info = "Get information about synchronisation or database objects.";
 
         public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. You can query the registered connection string s with 'tsync list'.";
         public const string WorkbookFileName = "The file name of a new or existing workbook. Only the xlsx format is supported.";
         public const string TableNames = "Comma separated list of table names for a simple synchronisation definition. You can use the underscore character to prefix table names with a database scheme.";
         public const string TableName = "Table name to list columns.";
+        public const string Json = "Output in Json format.";
         public const string SyncDefinitionFileName = "File name of a synchronisation definiton (JSON).";
         public const string SettingsFileName = "File name of additional settings (JSON).";
         public const string WorkbookOutputFileName = "Optional output workbook file name. If used, the result of the operation is saved to this file. Otherwise the original workbook will be overwritten.";
@@ -146,8 +146,8 @@ namespace TSync
             public string WorkbookOutputFileName { get; set; }
         }
 
-        [Verb("list", HelpText = HelpText.List)]
-        class ListOptions
+        [Verb("info", HelpText = HelpText.Info)]
+        class InfoOptions
         {
             [Option('w', "WorkbookFileName", SetName = "wb", HelpText = HelpText.WorkbookFileName)]
             public string WorkbookFileName { get; set; }
@@ -157,16 +157,9 @@ namespace TSync
 
             [Option('t', "TableName", SetName = "data", HelpText = HelpText.TableName)]
             public string TableName { get; set; }
-        }
 
-        [Verb("info", HelpText = HelpText.Info)]
-        class InfoOptions
-        {
-            [Option('w', "WorkbookFileName", SetName = "wb", HelpText = HelpText.WorkbookFileName)]
-            public string WorkbookFileName { get; set; }
-
-            [Option('c', "ConnectionStringOrName", SetName = "data", HelpText = HelpText.ConnectionStringOrName)]
-            public string ConnectionStringOrName { get; set; }
+            [Option('j', "Json", HelpText = HelpText.Json)]
+            public bool Json { get; set; }
         }
 
         static int Main(string[] args)
@@ -175,13 +168,12 @@ namespace TSync
 
             try
             {
-                return CommandLine.Parser.Default.ParseArguments<DownloadOptions, UploadOptions, EmbedOptions, ResizeOptions, ListOptions, InfoOptions>(args)
+                return CommandLine.Parser.Default.ParseArguments<DownloadOptions, UploadOptions, EmbedOptions, ResizeOptions, InfoOptions>(args)
                     .MapResult(
                         (DownloadOptions opts) => Download(opts),
                         (UploadOptions opts) => Upload(opts),
                         (EmbedOptions opts) => Embed(opts),
                         (ResizeOptions opts) => Resize(opts),
-                        (ListOptions opts) => List(opts),
                         (InfoOptions opts) => Info(opts),
                         errs => ExitCode.Failed);
             }
@@ -270,18 +262,11 @@ namespace TSync
             return ExitCode.Success;
         }
 
-        private static int List(ListOptions opts)
-        {
-            var application = serviceProvider.GetService<Application>();
-            Console.Out.Write(application.List(opts.ConnectionStringOrName, opts.TableName, opts.WorkbookFileName));
-
-            return ExitCode.Success;
-        }
-
         private static int Info(InfoOptions opts)
         {
             var application = serviceProvider.GetService<Application>();
-            Console.Out.Write(application.Info(opts.ConnectionStringOrName, opts.WorkbookFileName));
+            var output = application.Info(opts.ConnectionStringOrName, opts.TableName, opts.WorkbookFileName, opts.Json);
+            Console.Out.Write(output);
 
             return ExitCode.Success;
         }

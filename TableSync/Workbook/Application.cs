@@ -31,7 +31,15 @@ namespace TableSync
             return new Workbook(connections, fileName);
         }
 
-        public string List(string connectionStringOrName, string tableName, string workbookFileName)
+        public string Info(string connectionStringOrName, string tableName, string workbookFileName, bool jsonFormat)
+        {
+            if (jsonFormat)
+                    return InfoAsJson(connectionStringOrName, tableName, workbookFileName);
+
+            return InfoAsText(connectionStringOrName, tableName, workbookFileName);
+        }
+
+        private string InfoAsText(string connectionStringOrName, string tableName, string workbookFileName)
         {
             var result = new StringBuilder();
 
@@ -78,12 +86,7 @@ namespace TableSync
                 }
                 else
                 {
-                    TableInfo tableInfo;
-                    if (databaseInfo.TableInfos.Contains(tableName))
-                        tableInfo = databaseInfo.TableInfos[tableName];
-                    else
-                        tableInfo = databaseInfo.TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0).SingleOrDefault();
-
+                    var tableInfo = databaseInfo.SearchTableInfo(tableName);
                     if (tableInfo == null)
                         throw new MissingTableException(tableName);
 
@@ -99,7 +102,7 @@ namespace TableSync
             return result.ToString();
         }
 
-        public string Info(string connectionStringOrName, string workbookFileName)
+        private string InfoAsJson(string connectionStringOrName, string tableName, string workbookFileName)
         {
             if (!string.IsNullOrEmpty(workbookFileName))
                 using (var wb = Open(workbookFileName))
@@ -111,7 +114,14 @@ namespace TableSync
             var connectionString = connections != null ? connections.GetConnectionString(connectionStringOrName) : connectionStringOrName;
             var databaseInfo = new DatabaseInfo(connectionString);
 
-            return MyJsonConvert.SerializeObject(databaseInfo);
+            if (string.IsNullOrEmpty(tableName))
+                return MyJsonConvert.SerializeObject(databaseInfo);
+
+            var tableInfo = databaseInfo.SearchTableInfo(tableName);
+            if (tableInfo == null)
+                throw new MissingTableException(tableName);
+
+            return MyJsonConvert.SerializeObject(tableInfo);
         }
         public static SyncDefinition GetDefinitionOrDefault(IEnumerable<string> tableNames, string definitionFileName)
         {
