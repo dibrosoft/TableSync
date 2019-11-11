@@ -9,6 +9,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>tsync</ToolCommandName>
+    <Description>TSync is the CLI of TableSync, a component to synchronize data between Microsoft SQL Server and Excel files in OpenXML format (xlsx).
+</Description>
+    <Authors>Dirk Brockhaus</Authors>
+    <Company>Dirk Brockhaus Software GmbH</Company>
+    <PackageLicenseFile>License.md</PackageLicenseFile>
+    <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
 </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +33,10 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\License.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
   </ItemGroup>
 

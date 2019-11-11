@@ -4,6 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>TableSync</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseFile>License.md</PackageLicenseFile>
+    <Authors>Dirk Brockhaus</Authors>
+    <Company>Dirk Brockhaus Software GmbH</Company>
+    <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
+    <Description>Component to synchronize data between Microsoft SQL Server and Excel files in OpenXML format (xlsx).</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +20,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
     <PackageReference Include="System.ObjectModel" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\License.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
