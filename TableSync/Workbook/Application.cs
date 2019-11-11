@@ -61,6 +61,7 @@ namespace TableSync
             if (string.IsNullOrEmpty(connectionStringOrName))
             {
                 result.AppendLine("Connections");
+                result.AppendLine();
                 foreach (var connection in connections)
                 {
                     result.Append("  ");
@@ -73,9 +74,12 @@ namespace TableSync
             var databaseInfo = new DatabaseInfo(connectionInfo);
             var tableInfos = databaseInfo.SearchTableInfos(tableNames);
 
-            foreach(var tableInfo in tableInfos)
+            result.AppendLine("Tables");
+            result.AppendLine();
+
+            foreach (var tableInfo in tableInfos)
             { 
-                result.AppendLine($"Table {tableInfo.RangeTableName}");
+                result.AppendLine(tableInfo.RangeTableName);
                 foreach (var columnInfo in tableInfo.ColumnInfos)
                 {
                     result.Append("  ");
