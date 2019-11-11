@@ -2,7 +2,6 @@
 
 namespace TableSync
 {
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Connection
     {
         public string Name { get; set; }
