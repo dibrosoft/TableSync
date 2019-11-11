@@ -20,8 +20,7 @@ namespace TSync
 
         public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. You can query the registered connection string s with 'tsync list'.";
         public const string WorkbookFileName = "The file name of a new or existing workbook. Only the xlsx format is supported.";
-        public const string TableNames = "Comma separated list of table names for a simple synchronisation definition. You can use the underscore character to prefix table names with a database scheme.";
-        public const string TableName = "Table name to list columns.";
+        public const string TableNames = "Comma separated list of table names. You can use the underscore character to prefix table names with a database scheme.";
         public const string Json = "Output in Json format.";
         public const string SyncDefinitionFileName = "File name of a synchronisation definiton (JSON).";
         public const string SettingsFileName = "File name of additional settings (JSON).";
@@ -155,8 +154,8 @@ namespace TSync
             [Option('c', "ConnectionStringOrName", SetName = "data", HelpText = HelpText.ConnectionStringOrName)]
             public string ConnectionStringOrName { get; set; }
 
-            [Option('t', "TableName", SetName = "data", HelpText = HelpText.TableName)]
-            public string TableName { get; set; }
+            [Option('n', "TableNames", SetName = "data", Separator = ',', HelpText = HelpText.TableNames)]
+            public IEnumerable<string> TableNames { get; set; }
 
             [Option('j', "Json", HelpText = HelpText.Json)]
             public bool Json { get; set; }
@@ -265,7 +264,7 @@ namespace TSync
         private static int Info(InfoOptions opts)
         {
             var application = serviceProvider.GetService<Application>();
-            var output = application.Info(opts.ConnectionStringOrName, opts.TableName, opts.WorkbookFileName, opts.Json);
+            var output = application.Info(opts.ConnectionStringOrName, opts.TableNames, opts.WorkbookFileName, opts.Json);
             Console.Out.Write(output);
 
             return ExitCode.Success;

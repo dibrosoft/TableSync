@@ -31,15 +31,15 @@ namespace TableSync
             return new Workbook(connections, fileName);
         }
 
-        public string Info(string connectionStringOrName, string tableName, string workbookFileName, bool jsonFormat)
+        public string Info(string connectionStringOrName, IEnumerable<string> tableNames, string workbookFileName, bool jsonFormat)
         {
             if (jsonFormat)
-                    return InfoAsJson(connectionStringOrName, tableName, workbookFileName);
+                    return InfoAsJson(connectionStringOrName, tableNames, workbookFileName);
 
-            return InfoAsText(connectionStringOrName, tableName, workbookFileName);
+            return InfoAsText(connectionStringOrName, tableNames, workbookFileName);
         }
 
-        private string InfoAsText(string connectionStringOrName, string tableName, string workbookFileName)
+        private string InfoAsText(string connectionStringOrName, IEnumerable<string> tableNames, string workbookFileName)
         {
             var result = new StringBuilder();
 
@@ -48,61 +48,47 @@ namespace TableSync
                 using (var wb = Open(workbookFileName))
                 {
                     var syncDefinition = wb.GetDefinition();
-                    result.AppendLine($"Ranges of workbook: {workbookFileName}");
+                    result.AppendLine($"Workbook {workbookFileName}");
                     foreach (var range in syncDefinition.Ranges)
                     {
                         result.Append("  ");
                         result.AppendLine(range.Name);
                     }
                 }
+                return result.ToString();
             }
-            else if (string.IsNullOrEmpty(connectionStringOrName))
+
+            if (string.IsNullOrEmpty(connectionStringOrName))
             {
-                result.AppendLine("Connection names:");
+                result.AppendLine("Connections");
                 foreach (var connection in connections)
                 {
                     result.Append("  ");
                     result.AppendLine(connection.Name);
                 }
+                return result.ToString();
             }
-            else
-            {
-                var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
-                var databaseInfo = new DatabaseInfo(connectionInfo);
 
-                if (string.IsNullOrEmpty(tableName))
+            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
+            var databaseInfo = new DatabaseInfo(connectionInfo);
+            var tableInfos = databaseInfo.SearchTableInfos(tableNames);
+
+            foreach(var tableInfo in tableInfos)
+            { 
+                result.AppendLine($"Table {tableInfo.RangeTableName}");
+                foreach (var columnInfo in tableInfo.ColumnInfos)
                 {
-                    result.Append("Tables");
-                    var connectionStringName = connections.GetProofedConnectionStringName(connectionStringOrName);
-                    if (!string.IsNullOrEmpty(connectionStringName))
-                        result.Append($" of connection {connectionStringName}");
-                    result.AppendLine(":");
-
-                    foreach (var tableInfo in databaseInfo.TableInfos)
-                    {
-                        result.Append("  ");
-                        result.AppendLine(tableInfo.RangeTableName);
-                    }
+                    result.Append("  ");
+                    result.AppendLine(columnInfo.ColumnName);
                 }
-                else
-                {
-                    var tableInfo = databaseInfo.SearchTableInfo(tableName);
-                    if (tableInfo == null)
-                        throw new MissingTableException(tableName);
 
-                    result.AppendLine($"Columns of table {tableInfo.RangeTableName}");
-                    foreach (var columnInfo in tableInfo.ColumnInfos)
-                    {
-                        result.Append("  ");
-                        result.AppendLine(columnInfo.ColumnName);
-                    }
-                }
+                result.AppendLine();
             }
 
             return result.ToString();
         }
 
-        private string InfoAsJson(string connectionStringOrName, string tableName, string workbookFileName)
+        private string InfoAsJson(string connectionStringOrName, IEnumerable<string> tableNames, string workbookFileName)
         {
             if (!string.IsNullOrEmpty(workbookFileName))
                 using (var wb = Open(workbookFileName))
@@ -113,15 +99,9 @@ namespace TableSync
 
             var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
             var databaseInfo = new DatabaseInfo(connectionInfo);
+            var tableInfos = databaseInfo.SearchTableInfos(tableNames);
 
-            if (string.IsNullOrEmpty(tableName))
-                return MyJsonConvert.SerializeObject(databaseInfo);
-
-            var tableInfo = databaseInfo.SearchTableInfo(tableName);
-            if (tableInfo == null)
-                throw new MissingTableException(tableName);
-
-            return MyJsonConvert.SerializeObject(tableInfo);
+            return MyJsonConvert.SerializeObject(tableInfos);
         }
         public static SyncDefinition GetDefinitionOrDefault(IEnumerable<string> tableNames, string definitionFileName)
         {

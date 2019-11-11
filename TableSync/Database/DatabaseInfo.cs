@@ -29,12 +29,27 @@ namespace TableSync
             }
         }
 
-        public TableInfo SearchTableInfo(string tableName)
+        public TableInfos SearchTableInfos(IEnumerable<string> tableNames)
         {
-            if (TableInfos.Contains(tableName))
-                return TableInfos[tableName];
+            if (tableNames?.Count() == 0)
+                return TableInfos;
 
-           return TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0).SingleOrDefault();
+            var result = new TableInfos();
+
+            foreach (var tableName in tableNames)
+            {
+                TableInfo tableInfo =  
+                    TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0 ||
+                                             string.Compare(item.FullTableName, tableName, true) == 0 ||
+                                             string.Compare(item.RangeTableName, tableName, true) == 0).SingleOrDefault();
+                
+                if (tableInfo == null)
+                    throw new MissingTableException(tableName);
+
+                result.Add(tableInfo);
+            }
+
+            return result;
         }
 
         private void GenerateTableInfos(SqlConnection connection, HashSet<string> tablesOfInterest)
