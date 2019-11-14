@@ -349,6 +349,9 @@ namespace TableSync
                     CopyTableToRange(systemData.Setting, systemData.SettingDT);
                 else if (excelPackage.Workbook.Names.ContainsKey(Constants.TableSync_Setting))
                     excelPackage.Workbook.Names.Remove(Constants.TableSync_Setting);
+
+                if (fullDefinition)
+                    CopyTableToRange(systemData.Help, systemData.HelpDT);
             }
         }
 

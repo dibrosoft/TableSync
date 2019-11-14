@@ -11,7 +11,9 @@ namespace TableSync
         public const string Condition = "Condition";
         public const string ConnectionString = "ConnectionString";
         public const string CustomNumberFormat = "CustomNumberFormat";
+        public const string Description = "Description";
         public const string Direction = "Direction";
+        public const string Help = "Help";
         public const string Name = "Name";
         public const string Names = "Names";
         public const string NumberFormat = "NumberFormat";
@@ -31,6 +33,7 @@ namespace TableSync
         public const string TableSync_Order = "TableSync_Order";
         public const string TableSync_Condition = "TableSync_Condition";
         public const string TableSync_Setting = "TableSync_Setting";
+        public const string TableSync_Help = "TableSync_Help";
         public const string Title = "Title";
         public const string Value = "Value";
     }
