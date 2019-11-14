@@ -32,7 +32,7 @@ namespace TableSync
                 return new ConnectionInfo()
                 {
                     ConnectionString = this[connectionStringName].ConnectionString,
-                    ReservedTableNames = this[connectionStringName].ReservedTableNames
+                    ReservedTableNames = this[connectionStringName].HiddenTableNames
                 };
 
             return CreateInfoFromConnectionString(connectionStringOrName);
@@ -46,17 +46,17 @@ namespace TableSync
             return new ConnectionInfo()
             {
                 ConnectionString = connectionString,
-                ReservedTableNames = new ReservedTableNames()
+                ReservedTableNames = new HiddenTableNames()
             };
         }
 
-        public ReservedTableNames GetReservedTableNames(string connectionStringOrName)
+        public HiddenTableNames GetReservedTableNames(string connectionStringOrName)
         {
             var connectionStringName = GetProofedConnectionStringName(connectionStringOrName);
             if (connectionStringName != null)
-                return this[connectionStringName].ReservedTableNames;
+                return this[connectionStringName].HiddenTableNames;
 
-            return new ReservedTableNames();
+            return new HiddenTableNames();
         }
     }
 }

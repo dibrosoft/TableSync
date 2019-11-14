@@ -7,7 +7,7 @@ namespace TableSync
         public string Name { get; set; }
         public string ConnectionString { get; set; }
         
-        public ReservedTableNames ReservedTableNames {get; set;}
+        public HiddenTableNames HiddenTableNames {get; set;}
 
         public override string ToString()
         {

@@ -1,0 +1,21 @@
+﻿[
+  /* 
+
+  Enter named connection strings with the following syntax:
+
+  {
+    "Name": "ConnectionStringName1",
+    "ConnectionString": "connection string 1",
+  },
+
+
+  If you want to hide table names in tsync, for example the __MigrationHistory of EF, you can use the attribute HiddenTableNames 
+
+  {
+    "Name": "ConnectionStringName2",
+    "ConnectionString": "connection string 2",
+    "HiddenTableNames": [ "__MigrationHistory" ]
+  }
+
+  */
+]

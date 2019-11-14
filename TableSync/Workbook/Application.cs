@@ -48,7 +48,7 @@ namespace TableSync
                 using (var wb = Open(workbookFileName))
                 {
                     var syncDefinition = wb.GetDefinition();
-                    result.AppendLine($"Workbook {workbookFileName}");
+                    result.AppendLine($"Workbook {workbookFileName}:");
                     foreach (var range in syncDefinition.Ranges)
                     {
                         result.Append("  ");
@@ -60,13 +60,14 @@ namespace TableSync
 
             if (string.IsNullOrEmpty(connectionStringOrName))
             {
-                result.AppendLine("Connections");
-                result.AppendLine();
+                result.AppendLine("Connections:");
                 foreach (var connection in connections)
                 {
                     result.Append("  ");
                     result.AppendLine(connection.Name);
                 }
+                result.AppendLine();
+                result.AppendLine($"Path of the connection config file: {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tsync", "connections.json")}"); 
                 return result.ToString();
             }
 
@@ -74,7 +75,7 @@ namespace TableSync
             var databaseInfo = new DatabaseInfo(connectionInfo);
             var tableInfos = databaseInfo.SearchTableInfos(tableNames);
 
-            result.AppendLine("Tables");
+            result.AppendLine("Tables:");
             result.AppendLine();
 
             foreach (var tableInfo in tableInfos)

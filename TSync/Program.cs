@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TableSync;
 
@@ -42,8 +43,23 @@ namespace TSync
                 .AddUserSecrets<Program>()
                 .Build();
 
+            var basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+            var configPath = Path.Combine(basePath, "tsync");
+            if (!Directory.Exists(configPath))
+                Directory.CreateDirectory(configPath);
+
             connections = new Connections();
-            configBuilder.GetSection("TSync:Connections").Bind(connections);
+            var connectionsPath = Path.Combine(configPath, "connections.json");
+            if (!File.Exists(connectionsPath))
+            {
+                var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var connectionsTemplatePath = Path.Combine(rootDir, "connections.json");
+                File.Copy(connectionsTemplatePath, connectionsPath);
+            }
+
+            connections = MyJsonConvert.DeserializeObjectFromFile<Connections>(connectionsPath);
+
             var application = new Application(connections);
 
             var services = new ServiceCollection()
