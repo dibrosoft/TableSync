@@ -67,7 +67,9 @@ namespace TableSync
                     result.AppendLine(connection.Name);
                 }
                 result.AppendLine();
-                result.AppendLine($"Path of the connection config file: {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tsync", "connections.json")}"); 
+                result.AppendLine("Path of the connection config file:");
+                result.Append("  ");
+                result.AppendLine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tsync", "connections.json"));
                 return result.ToString();
             }
 
