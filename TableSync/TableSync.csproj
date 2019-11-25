@@ -4,11 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>TableSync</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageLicenseFile>License.md</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Authors>Dirk Brockhaus</Authors>
     <Company>Dirk Brockhaus Software GmbH</Company>
     <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
     <Description>Component to synchronize data between Microsoft SQL Server and Excel files in OpenXML format (xlsx).</Description>
+    <Version>1.0.0-alpha</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\License.md">
+    <None Include="..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
