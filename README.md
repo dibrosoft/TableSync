@@ -2,9 +2,9 @@
 
 A component to synchronize data between Microsoft SQL Server and Excel files in OpenXML format (xlsx).
 
-## Support
+## Contribution
 
-At now this is a private repository. Support is limited to invited users.
+This project is in his early stage with a limited number of invited users. Please wait with your contribution until the first stable version is available.
 
 ## License
 

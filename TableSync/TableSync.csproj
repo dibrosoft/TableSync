@@ -10,7 +10,7 @@
     <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
     <Description>A component to synchronize data between Microsoft SQL Server and Excel files in OpenXML format (xlsx).</Description>
     <Version>1.0.0-alpha</Version>
-    <PackageProjectUrl>https://github.com/dirk-brockhaus/TableSync</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

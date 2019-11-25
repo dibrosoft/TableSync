@@ -17,7 +17,7 @@
     <Version>1.0.0-alpha</Version>
     <PackageId>TableSync.Cli</PackageId>
     <Product>TableSync</Product>
-    <PackageProjectUrl>https://github.com/dirk-brockhaus/TableSync</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
 </PropertyGroup>
 
   <ItemGroup>
