@@ -107,7 +107,7 @@ namespace TSync
                         workbook.Save();
                 }
 
-                workbook.Upload(opts.ConnectionStringOrName, syncDefinition, settings);
+                workbook.Upload(opts.ConnectionStringOrName, syncDefinition, settings, opts.RemoveMissingRows);
             }
 
             return ExitCode.Success;

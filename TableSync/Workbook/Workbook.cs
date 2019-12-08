@@ -42,7 +42,7 @@ namespace TableSync
                 RefreshSettings(syncDefinition, settings);
         }
 
-        public void Upload(string connectionStringOrName, SyncDefinition syncDefinition = null, Settings settings = null)
+        public void Upload(string connectionStringOrName, SyncDefinition syncDefinition = null, Settings settings = null, bool removeMissingRows = false)
         {
             if (syncDefinition == null)
                 syncDefinition = GetDefinition();
@@ -67,13 +67,14 @@ namespace TableSync
                         workbookTables.Add(range.FullTableName, workbookTable);
                     }
 
-                    foreach (var fullTableName in databaseManager.FullTableNamesDependantToIndependant(ranges))
-                    {
-                        var workbookTable = workbookTables[fullTableName];
-                        var range = ranges.SearchByFullTableName(fullTableName);
+                    if (removeMissingRows)
+                        foreach (var fullTableName in databaseManager.FullTableNamesDependantToIndependant(ranges))
+                        {
+                            var workbookTable = workbookTables[fullTableName];
+                            var range = ranges.SearchByFullTableName(fullTableName);
 
-                        databaseManager.RemoveUnusedRows(range, workbookTable, syncDefinition, settings);
-                    }
+                            databaseManager.RemoveMissingRows(range, workbookTable, syncDefinition, settings);
+                        }
 
                     foreach (var fullTableName in databaseManager.FullTableNamesIndependantToDependant(ranges))
                     {

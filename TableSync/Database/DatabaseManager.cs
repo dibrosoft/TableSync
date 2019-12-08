@@ -279,7 +279,7 @@ namespace TableSync
                 targetRow[columnInfo.ColumnName] = sourceRow[columnInfo.ColumnName];
         }
 
-        public void RemoveUnusedRows(Range range, DataTable workbookTable, SyncDefinition syncDefinition, Settings settings)
+        public void RemoveMissingRows(Range range, DataTable workbookTable, SyncDefinition syncDefinition, Settings settings)
         {
             var query = GetQuery(range, DownloadType.Full, syncDefinition, settings);
             var tableInfo = databaseInfo.TableInfos[range.FullTableName];

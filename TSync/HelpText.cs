@@ -16,6 +16,7 @@
         public const string SettingsFileName = "File name of additional settings (JSON).";
         public const string WorkbookOutputFileName = "Optional output workbook file name. If used, the result of the operation is saved to this file. Otherwise the original workbook will be overwritten.";
         public const string AutoResize = "Option to configure that 'resize' should always run before upload.";
+        public const string RemoveMissingRows = "Option to remove the missing rows in the workbook from the database when uploading.";
         public const string KeepFormula = "Option to configure that download will not overwrite formulas in the download area.";
         public const string FullDefinition = "Option to embed a full instead of a simple synchronisation definition.";
     }

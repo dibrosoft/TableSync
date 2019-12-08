@@ -23,5 +23,8 @@ namespace TSync
 
         [Option('a', "AutoResize", Default = false, HelpText = HelpText.AutoResize)]
         public bool AutoResize { get; set; }
+
+        [Option('r', "RemoveMissingRows", Default = false, HelpText = HelpText.RemoveMissingRows)]
+        public bool RemoveMissingRows { get; set; }
     }
 }
