@@ -15,7 +15,7 @@ namespace TableSync
 
         public DatabaseInfo(ConnectionInfo connectionInfo, HashSet<string> tablesOfInterest = null)
         {
-            this.connectionInfo= connectionInfo;
+            this.connectionInfo = connectionInfo;
 
             using (var connection = new SqlConnection(connectionInfo.ConnectionString))
             {
@@ -31,7 +31,7 @@ namespace TableSync
 
         public TableInfos SearchTableInfos(IEnumerable<string> tableNames)
         {
-            if (tableNames?.Count() == 0)
+            if (tableNames == null || tableNames.Count() == 0)
                 return TableInfos;
 
             var result = new TableInfos();

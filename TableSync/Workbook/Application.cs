@@ -58,7 +58,7 @@ namespace TableSync
                 return result.ToString();
             }
 
-            if (string.IsNullOrEmpty(connectionStringOrName))
+            if (connections != null && string.IsNullOrEmpty(connectionStringOrName))
             {
                 result.AppendLine("Connections:");
                 foreach (var connection in connections)
@@ -73,23 +73,26 @@ namespace TableSync
                 return result.ToString();
             }
 
-            var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
-            var databaseInfo = new DatabaseInfo(connectionInfo);
-            var tableInfos = databaseInfo.SearchTableInfos(tableNames);
+            if (!string.IsNullOrEmpty(connectionStringOrName))
+            {
+                var connectionInfo = connections.GetConnectionInfo(connectionStringOrName);
+                var databaseInfo = new DatabaseInfo(connectionInfo);
+                var tableInfos = databaseInfo.SearchTableInfos(tableNames);
 
-            result.AppendLine("Tables:");
-            result.AppendLine();
-
-            foreach (var tableInfo in tableInfos)
-            { 
-                result.AppendLine(tableInfo.RangeTableName);
-                foreach (var columnInfo in tableInfo.ColumnInfos)
-                {
-                    result.Append("  ");
-                    result.AppendLine(columnInfo.ColumnName);
-                }
-
+                result.AppendLine("Tables:");
                 result.AppendLine();
+
+                foreach (var tableInfo in tableInfos)
+                {
+                    result.AppendLine(tableInfo.RangeTableName);
+                    foreach (var columnInfo in tableInfo.ColumnInfos)
+                    {
+                        result.Append("  ");
+                        result.AppendLine(columnInfo.ColumnName);
+                    }
+
+                    result.AppendLine();
+                }
             }
 
             return result.ToString();
