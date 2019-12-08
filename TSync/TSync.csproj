@@ -14,7 +14,7 @@
     <Company>Dirk Brockhaus Software GmbH</Company>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
-    <Version>1.0.0-alpha.2</Version>
+    <Version>1.0.0-rc</Version>
     <PackageId>TableSync.Cli</PackageId>
     <Product>TableSync</Product>
     <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
