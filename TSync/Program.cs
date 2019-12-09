@@ -21,23 +21,7 @@ namespace TSync
                 .AddUserSecrets<Program>()
                 .Build();
 
-            var basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-            var configPath = Path.Combine(basePath, "tsync");
-            if (!Directory.Exists(configPath))
-                Directory.CreateDirectory(configPath);
-
-            connections = new Connections();
-            var connectionsPath = Path.Combine(configPath, "connections.json");
-            if (!File.Exists(connectionsPath))
-            {
-                var rootDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                var connectionsTemplatePath = Path.Combine(rootDir, "connections.json");
-                File.Copy(connectionsTemplatePath, connectionsPath);
-            }
-
-            connections = MyJsonConvert.DeserializeObjectFromFile<Connections>(connectionsPath);
-
+            var connections = ConnectionsProvider.GetDefaultInstance();
             var application = new Application(connections);
 
             var services = new ServiceCollection()

@@ -34,7 +34,7 @@ namespace TableSync
         public string Info(string connectionStringOrName, IEnumerable<string> tableNames, string workbookFileName, bool jsonFormat)
         {
             if (jsonFormat)
-                    return InfoAsJson(connectionStringOrName, tableNames, workbookFileName);
+                return InfoAsJson(connectionStringOrName, tableNames, workbookFileName);
 
             return InfoAsText(connectionStringOrName, tableNames, workbookFileName);
         }
@@ -69,7 +69,7 @@ namespace TableSync
                 result.AppendLine();
                 result.AppendLine("Path of the connection config file:");
                 result.Append("  ");
-                result.AppendLine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tsync", "connections.json"));
+                result.AppendLine(ConnectionsProvider.GetDefaultConnectionsPath());
                 return result.ToString();
             }
 
