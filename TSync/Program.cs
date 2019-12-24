@@ -12,7 +12,6 @@ namespace TSync
     class Program
     {
         private static ServiceProvider serviceProvider;
-        private static Connections connections;
 
         private static void Init()
         {
