@@ -12,7 +12,7 @@ namespace TableSync
 
         public Application(Connections connections = null)
         {
-            this.connections = connections;
+            this.connections = connections == null ? ConnectionsProvider.GetDefaultInstance() : connections;
         }
 
         public Workbook CreateOrOpen(string fileName)
@@ -58,7 +58,7 @@ namespace TableSync
                 return result.ToString();
             }
 
-            if (connections != null && string.IsNullOrEmpty(connectionStringOrName))
+            if (string.IsNullOrEmpty(connectionStringOrName))
             {
                 result.AppendLine("Connections:");
                 foreach (var connection in connections)
