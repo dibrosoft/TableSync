@@ -31,6 +31,8 @@ namespace TableSync
             return new Workbook(connections, fileName);
         }
 
+        public string Info() => this.Info(default, default, default, default);
+
         public string Info(string connectionStringOrName, IEnumerable<string> tableNames, string workbookFileName, bool jsonFormat)
         {
             if (jsonFormat)
