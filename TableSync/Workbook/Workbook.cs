@@ -21,6 +21,13 @@ namespace TableSync
             excelPackage.Workbook.Calculate();
         }
 
+        public void Download(string connectionStringOrName, string tableNames)
+        {
+            var names = tableNames.Split(',');
+            var syncDefinition = new SyncDefinition(names);
+            Download(connectionStringOrName, syncDefinition: syncDefinition);
+        }
+
         public void Download(string connectionStringOrName, bool keepFormula = false, SyncDefinition syncDefinition = null, Settings settings = null)
         {
             if (syncDefinition == null)
