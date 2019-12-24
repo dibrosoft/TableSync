@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 
 namespace TableSync
@@ -11,6 +12,11 @@ namespace TableSync
         protected override string GetKeyForItem(TableInfo item)
         {
             return item.FullTableName;
+        }
+
+        public override string ToString()
+        {
+            return String.Join(";", this.Select(item => item.ToString()).ToList());
         }
     }
 
