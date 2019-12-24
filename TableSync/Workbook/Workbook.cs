@@ -255,6 +255,13 @@ namespace TableSync
             return result;
         }
 
+        public void EmbedDefinition(string connectionStringOrName, string tableNames, bool fullDefinition = false)
+        {
+            var names = tableNames.Split(',');
+            var syncDefinition = new SyncDefinition(names);
+            EmbedDefinition(connectionStringOrName, syncDefinition: syncDefinition, fullDefinition: fullDefinition);
+        }
+
         public void EmbedDefinition(string connectionStringOrName, SyncDefinition syncDefinition, bool fullDefinition = false)
         {
             if (syncDefinition == null)
