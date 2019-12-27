@@ -9,6 +9,9 @@ namespace TableSync
 
         public Range(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                throw new IllegalRangeNameException();
+
             Name = name;
         }
 
@@ -35,18 +38,13 @@ namespace TableSync
                             usedTableName = parts[0];
                             break;
                         case 2:
-                            if (Name.Contains("_"))
-                            {
-                                usedSchema = Name.Split('_')[0];
-                                usedTableName = Name.Substring(usedSchema.Length + 1);
-
-                                if (string.IsNullOrEmpty(usedSchema) || string.IsNullOrEmpty(usedTableName))
-                                    throw new IllegalRangeNameException();
-                            }
+                            usedSchema = parts[0];
+                            usedTableName = parts[1];
                             break;
-                        default:
-                            throw new IllegalRangeNameException();
                     }
+
+                    if (string.IsNullOrEmpty(usedSchema) || string.IsNullOrEmpty(usedTableName))
+                        throw new IllegalRangeNameException();
                 }
 
                 return TableInfo.CreateSqlTableName(usedSchema, usedTableName);
