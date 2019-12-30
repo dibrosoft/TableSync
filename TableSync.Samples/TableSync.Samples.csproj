@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <UserSecretsId>aba2496e-7121-47b0-bbd8-236045467781</UserSecretsId>
+
+    <Authors>Dirk Brockhaus</Authors>
+
+    <Company>Dirk Brockhaus Software GmbH</Company>
+
+    <Description>Samples for the TableSync component</Description>
+
+    <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
+
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+
+    <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
+
+    <RepositoryUrl>https://github.com/dibrosoft/TableSync.git</RepositoryUrl>
+
+    <PackageReleaseNotes>This project is in his early stage with a limited number of invited users. Please wait with your contribution until the first stable version is available.</PackageReleaseNotes>
+
+    <Version>1.0.0-rc.2</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableSync\TableSync.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

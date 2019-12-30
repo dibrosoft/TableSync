@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableSync.Samples", "TableSync.Samples\TableSync.Samples.csproj", "{D862C933-1B63-4FBF-B45A-639C5F0BC130}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{63C7224E-B73C-4094-9CF9-9B5883E3AB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63C7224E-B73C-4094-9CF9-9B5883E3AB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63C7224E-B73C-4094-9CF9-9B5883E3AB75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D862C933-1B63-4FBF-B45A-639C5F0BC130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D862C933-1B63-4FBF-B45A-639C5F0BC130}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D862C933-1B63-4FBF-B45A-639C5F0BC130}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D862C933-1B63-4FBF-B45A-639C5F0BC130}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
