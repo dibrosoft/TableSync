@@ -15,6 +15,10 @@
     <PackageReleaseNotes>This project is in his early stage with a limited number of invited users. Please wait with your contribution until the first stable version is available.</PackageReleaseNotes>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <NoWarn>NU5105</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="connections.json" />
   </ItemGroup>

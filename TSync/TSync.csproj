@@ -22,6 +22,10 @@
     <PackageReleaseNotes>This project is in his early stage with a limited number of invited users. Please wait with your contribution until the first stable version is available.</PackageReleaseNotes>
 </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>NU5105</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
