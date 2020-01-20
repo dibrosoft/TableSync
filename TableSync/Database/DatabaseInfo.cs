@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 
@@ -23,6 +23,8 @@ namespace TableSync
 
                 GenerateTableInfos(connection, tablesOfInterest);
 
+                AddPrimaryInformation(connection);
+
                 AddDependsOn(connection);
 
                 CheckForTablesOfInterest(tablesOfInterest);
@@ -38,7 +40,7 @@ namespace TableSync
 
             foreach (var tableName in tableNames)
             {
-                TableInfo tableInfo =  
+                var tableInfo =  
                     TableInfos.Where(item => string.Compare(item.TableName, tableName, true) == 0 ||
                                              string.Compare(item.FullTableName, tableName, true) == 0 ||
                                              string.Compare(item.RangeTableName, tableName, true) == 0).SingleOrDefault();
@@ -56,57 +58,38 @@ namespace TableSync
         {
             var dataTypeMap = GenerateDataTypeMap(connection);
 
-            DataView columns = new DataView(connection.GetSchema("Columns"));
+            var columns = new DataView(connection.GetSchema("Columns"));
             columns.Sort = "TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION";
-
-            string schema = null;
-            string tableName = null;
-            List<ColumnInfo> columnSources = new List<ColumnInfo>();
 
             foreach (DataRowView column in columns)
             {
-                var newSchema = column["TABLE_SCHEMA"].ToString();
-                var newTableName = column["TABLE_NAME"].ToString();
+                var tableSchema = column["TABLE_SCHEMA"].ToString();
+                var tableName = column["TABLE_NAME"].ToString();
 
-                if (!connectionInfo.IsReservedTableName(newTableName))
+                if (!connectionInfo.IsReservedTableName(tableName))
                 {
-                    var newFullTableName = TableInfo.CreateSqlTableName(newSchema, newTableName);
-                    if (tablesOfInterest == null || tablesOfInterest.Contains(newFullTableName))
+                    var fullTableName = TableInfo.CreateSqlTableName(tableSchema, tableName);
+                    if (tablesOfInterest == null || tablesOfInterest.Contains(fullTableName))
                     {
                         var columnName = column["COLUMN_NAME"].ToString();
                         var dataType = column["DATA_TYPE"].ToString();
                         var columnType = dataTypeMap.ContainsKey(dataType) ? dataTypeMap[dataType] : "System.Byte[]";
                         var isRequired = string.Compare(column["IS_NULLABLE"].ToString(), "NO", true) == 0;
-                        ColumnInfo NewColumnSource = new ColumnInfo(columnName, columnType, dataType, isRequired);
+                        var columnInfo = new ColumnInfo(columnName, columnType, dataType, isRequired);
 
-                        if (tableName == null)
-                        {
-                            schema = newSchema;
-                            tableName = newTableName;
-                        }
+                        if (!TableInfos.Contains(fullTableName))
+                            TableInfos.Add(new TableInfo(tableSchema, tableName));
 
-                        if (string.Compare(tableName, newTableName, true) == 0 && string.Compare(schema, newSchema, true) == 0)
-                            columnSources.Add(NewColumnSource);
-                        else
-                        {
-                            Refresh(schema, tableName, columnSources);
-
-                            schema = newSchema;
-                            tableName = newTableName;
-                            columnSources = new List<ColumnInfo>();
-                            columnSources.Add(NewColumnSource);
-                        }
+                        var tableInfo = TableInfos[fullTableName];
+                        tableInfo.ColumnInfos.Add(columnInfo);
                     }
                 }
             }
-
-            if (columnSources.Count > 0)
-                Refresh(schema, tableName, columnSources);
         }
 
         private Dictionary<string, string> GenerateDataTypeMap(SqlConnection connection)
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
 
             foreach (DataRow row in connection.GetSchema("DataTypes").Rows)
                 result.Add(row["TypeName"].ToString(), row["DataType"].ToString());
@@ -124,7 +107,7 @@ namespace TableSync
                 {
                     dataAdapter.SelectCommand = command;
 
-                    DataTable dataTable = new DataTable();
+                    var dataTable = new DataTable();
                     dataTable.Locale = CultureInfo.InvariantCulture;
 
                     dataAdapter.Fill(dataTable);
@@ -148,6 +131,36 @@ namespace TableSync
                 }
             }
         }
+        private void AddPrimaryInformation(SqlConnection connection)
+        {
+            const string primaryQuery = @"
+SELECT tc.TABLE_SCHEMA, tc.TABLE_NAME, COLUMN_NAME 
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc 
+JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu ON tc.CONSTRAINT_NAME = ccu.Constraint_name 
+WHERE tc.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+            using (var command = new SqlCommand() { Connection = connection, CommandText = primaryQuery })
+            using (var dataAdapter = new SqlDataAdapter() { SelectCommand = command })
+            using (var dataTable = new DataTable())
+            {
+                dataAdapter.Fill(dataTable);
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    var tableSchema = row["TABLE_SCHEMA"].ToString();
+                    var tableName = row["TABLE_NAME"].ToString();
+                    var columnName = row["COLUMN_NAME"].ToString();
+
+                    var fullName = TableInfo.CreateSqlTableName(tableSchema, tableName);
+                    if (TableInfos.Contains(fullName))
+                    {
+                        var tableInfo = TableInfos[fullName];
+                        if (tableInfo.ColumnInfos.Contains(columnName))
+                            tableInfo.ColumnInfos[columnName].IsPrimary = true;
+                    }
+
+                }
+            }
+        }
 
         private void CheckForTablesOfInterest(HashSet<string> tablesOfInterest)
         {
@@ -157,18 +170,6 @@ namespace TableSync
             foreach (var tableOfInterest in tablesOfInterest)
                 if (!TableInfos.Contains(tableOfInterest))
                     throw new MissingTableException(tableOfInterest);
-        }
-
-        private void Refresh(string schema, string tableName, IEnumerable<ColumnInfo> columnSources)
-        {
-            var fullTableName = TableInfo.CreateSqlTableName(schema, tableName);
-
-            if (!TableInfos.Contains(fullTableName))
-            {
-                TableInfo tableInfo = TableInfoExtensions.Create(schema, tableName, columnSources);
-                if (tableInfo != null)
-                    TableInfos.Add(tableInfo);
-            }
         }
     }
 }
