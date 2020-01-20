@@ -13,7 +13,7 @@
     <Authors>Dirk Brockhaus</Authors>
     <Company>Dirk Brockhaus Software GmbH</Company>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <Copyright>Dirk Brockhaus Software GmbH 2019</Copyright>
+    <Copyright>Dirk Brockhaus Software GmbH 2020</Copyright>
     <Version>1.0.0-rc.3</Version>
     <PackageId>TableSync.Cli</PackageId>
     <Product>TableSync</Product>
