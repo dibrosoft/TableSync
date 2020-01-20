@@ -273,10 +273,26 @@ namespace TableSync
             return true;
         }
 
-        private void CopyRow(DataRow sourceRow, DataRow targetRow, TableInfo tableInfo)
+        private void CopyRow(DataRow sourceRow, DataRow targetRow, TableInfo tableInfo, bool testForEquality)
         {
-            foreach (ColumnInfo columnInfo in tableInfo.ColumnInfos)
-                targetRow[columnInfo.ColumnName] = sourceRow[columnInfo.ColumnName];
+            foreach (var columnInfo in tableInfo.ColumnInfos)
+            {
+                var assign = true;
+
+                if (testForEquality)
+                {
+                    var obj1 = targetRow[columnInfo.ColumnName];
+                    var obj2 = sourceRow[columnInfo.ColumnName];
+
+                    if (obj1 == null && obj2 == null)
+                        assign = false;
+                    else if (obj1 != null && obj2 != null)
+                        assign = !obj1.Equals(obj2);
+                }
+
+                if (assign)
+                    targetRow[columnInfo.ColumnName] = sourceRow[columnInfo.ColumnName];
+            }
         }
 
         public void RemoveMissingRows(Range range, DataTable workbookTable, SyncDefinition syncDefinition, Settings settings)
@@ -319,12 +335,12 @@ namespace TableSync
                     {
                         TargetRow = tableContext.DataTable.NewRow();
 
-                        CopyRow(sourceRow, TargetRow, tableInfo);
+                        CopyRow(sourceRow, TargetRow, tableInfo, false);
 
                         tableContext.DataTable.Rows.Add(TargetRow);
                     }
                     else
-                        CopyRow(sourceRow, TargetRow, tableInfo);
+                        CopyRow(sourceRow, TargetRow, tableInfo, true);
                 }
 
                 tableContext.Update();
