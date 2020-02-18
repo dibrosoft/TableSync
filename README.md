@@ -16,10 +16,6 @@ TableSync can be used in two different ways:
 
 The documentation can be found on [Github](https://github.com/dibrosoft/TableSync/wiki).
 
-## Contribution
-
-This project is in his early stage with a limited number of invited users. Please wait with your contribution until the first stable version is available.
-
 ## License
 
 The project is licensed under the MIT License.
