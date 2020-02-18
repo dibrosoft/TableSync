@@ -19,7 +19,7 @@
     <Product>TableSync</Product>
     <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dibrosoft/TableSync.git</RepositoryUrl>
-    <PackageReleaseNotes>This project is in his early stage with a limited number of invited users. Please wait with your contribution until the first stable version is available.</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
 </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
