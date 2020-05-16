@@ -381,6 +381,11 @@ namespace TableSync
             excelPackage.SaveAs(fileInfo);
         }
 
+        public byte[] SaveAsByteArray()
+        {
+            return excelPackage.GetAsByteArray();
+        }
+
         private void CopyRangeToTable(Range range, DataTable dataTable)
         {
             var rangeWorker = new RangeWorker(excelPackage, range);
