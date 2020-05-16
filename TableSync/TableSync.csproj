@@ -9,10 +9,10 @@
     <Company>Dirk Brockhaus Software GmbH</Company>
     <Copyright>Dirk Brockhaus Software GmbH 2020</Copyright>
     <Description>A component to synchronize data between Microsoft SQL Server and Excel files in OpenXML format (xlsx).</Description>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dibrosoft/TableSync.git</RepositoryUrl>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>New Workbook method SaveAsByteArray</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
