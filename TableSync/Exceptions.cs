@@ -31,7 +31,7 @@ namespace TableSync
 
     public class MissingConnectionStringException : ExceptionBase
     {
-        public MissingConnectionStringException() : base("The connection string isn't configured. You can pass connection strings or names with the -c|--ConnectionStringOrName option. Use 'tsync list' to list the available connection string names.") { }
+        public MissingConnectionStringException() : base("The connection string isn't configured. You can pass connection strings or names with the -c|--ConnectionStringOrName option. Use 'tsync info' to list the available connection string names.") { }
     }
 
     public class MissingRequiredColumnException : ExceptionBase
@@ -41,7 +41,7 @@ namespace TableSync
 
     public class MissingSyncDefinitionException : ExceptionBase
     {
-        public MissingSyncDefinitionException() : base("The synchronisation definition is missing. You can use workbooks with embedded synchronisation definitions or you can pass definitions with -n|--TableNames or -d|--DefinitionFileName. Use 'tsync list -c' to query connections for available tables. Use 'tsync embed' to create workbooks with embedded synchronisation definitions.") { }
+        public MissingSyncDefinitionException() : base("The synchronisation definition is missing. You can use workbooks with embedded synchronisation definitions or you can pass definitions with -n|--TableNames or -d|--DefinitionFileName. Use 'tsync info -c' to query connections for available tables. Use 'tsync embed' to create workbooks with embedded synchronisation definitions.") { }
     }
 
     public class MissingSettingException : ExceptionBase

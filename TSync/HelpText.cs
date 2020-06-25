@@ -8,7 +8,7 @@
         public const string Resize = "Resize workbook ranges to fit to data.";
         public const string Info = "Get information about synchronisation or database objects.";
 
-        public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. You can query the registered connection string s with 'tsync list'.";
+        public const string ConnectionStringOrName = "The database connection string or the name of a registered connection string from appsettings.json. You can query the registered connection string s with 'tsync info'.";
         public const string WorkbookFileName = "The file name of a new or existing workbook. Only the xlsx format is supported.";
         public const string TableNames = "Comma separated list of table names. You can use the underscore character to prefix table names with a database scheme.";
         public const string Json = "Output in Json format.";
