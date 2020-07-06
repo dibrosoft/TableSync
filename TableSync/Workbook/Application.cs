@@ -30,6 +30,10 @@ namespace TableSync
 
             return new Workbook(connections, fileName);
         }
+        public Workbook Open(Stream stream)
+        {
+            return new Workbook(connections, stream);
+        }
 
         public string Info() => this.Info(default, default, default, default);
 

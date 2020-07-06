@@ -20,6 +20,12 @@ namespace TableSync
             excelPackage = new ExcelPackage(fileInfo);
             excelPackage.Workbook.Calculate();
         }
+        internal Workbook(Connections connections, Stream stream)
+        {
+            this.connections = connections;
+            excelPackage = new ExcelPackage(stream);
+            excelPackage.Workbook.Calculate();
+        }
 
         public void Download(string connectionStringOrName, string tableNames)
         {
