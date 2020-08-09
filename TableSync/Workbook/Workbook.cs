@@ -53,6 +53,8 @@ namespace TableSync
 
             if (settings != null)
                 RefreshSettings(syncDefinition, settings);
+
+            excelPackage.Workbook.Calculate();
         }
 
         public void Upload(string connectionStringOrName, SyncDefinition syncDefinition = null, Settings settings = null, bool removeMissingRows = false)
