@@ -14,12 +14,12 @@
     <Company>Dirk Brockhaus Software GmbH</Company>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Copyright>Dirk Brockhaus Software GmbH 2020</Copyright>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <PackageId>TableSync.Cli</PackageId>
     <Product>TableSync</Product>
     <PackageProjectUrl>https://github.com/dibrosoft/TableSync</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dibrosoft/TableSync.git</RepositoryUrl>
-    <PackageReleaseNotes>This is the dotnet Core 3.1 version of tsync.</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
 </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
